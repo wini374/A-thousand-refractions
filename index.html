@@ -210,7 +210,8 @@ function showTitle(){
  $('skip').hidden=true;$('replay').hidden=false;later(()=>{$('enter').disabled=false},reduced?0:3950);
 }
 function begin(){cancelSequence();['gate','title','prologue'].forEach(hide);$('title').classList.remove('play');$('stage').classList.remove('title-view');mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
-music.volume=.72;
+music.volume=.55;
+//音量//
 let starting=false;
 function toggleSound(){
  if(!MUSIC_PATH)return;
