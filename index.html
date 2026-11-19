@@ -27,6 +27,22 @@ button{font:inherit;color:var(--gold);background:#100e0bc9;border:1px solid #b9a
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition-duration:.01ms!important}}
 main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transition:opacity 1s} main.travelling .shade{background:radial-gradient(ellipse at center,transparent 45%,#08070655 100%)}
 #lineSection,#archiveSection{position:relative;text-align:center;width:min(90%,850px);padding:28px 12px;transition:opacity 1.4s ease,transform 1.4s ease}.tagline{font-size:clamp(17px,3vw,27px);line-height:1.9;color:#e6ddcc;font-style:italic}main.travelling .shade{opacity:.6}
+/* Screenshot-inspired, centered title stack. */
+#title{width:min(94%,800px);padding:16px 12px;font-family:Arial,"PingFang TC","Microsoft JhengHei",sans-serif;transition:opacity 1.3s ease}
+.title-stack{display:flex;flex-direction:column;align-items:center;text-align:center;font-weight:400}
+.title-stack h1{font-family:Arial,sans-serif;font-size:clamp(29px,6.4vw,58px);line-height:1.22;letter-spacing:0;text-shadow:none}
+.title-stack h1 span{display:block}
+.title-stack .zh{font-size:clamp(17px,3.6vw,29px);letter-spacing:.25em;padding:0;margin:clamp(18px,4vh,34px) 0 0;color:#b9a27a}
+.subtitle-en{font-size:clamp(16px,3.1vw,27px);font-style:italic;line-height:1.5;color:#bfb09b;margin:clamp(25px,6vh,52px) 0 0}
+.subtitle-zh{font-size:clamp(15px,2.8vw,23px);line-height:1.65;color:#d5c6b2;margin:clamp(12px,2.6vh,24px) 0 0}
+.title-stack button{font:400 clamp(16px,3vw,24px) Arial,sans-serif;letter-spacing:0;padding:clamp(12px,2.5vh,20px) 24px;margin-top:clamp(22px,5vh,48px);background:transparent;border-color:#b9a27a99;color:#b9a27a}
+.title-stack button:disabled{pointer-events:none}
+.title-stack .reveal{opacity:0;transform:translateY(-8px)}
+#title.play .reveal{animation:titleReveal 1.25s ease both;animation-delay:var(--delay)}
+@keyframes titleReveal{to{opacity:1;transform:translateY(0)}}
+main.title-view .brand,main.title-view .frame{opacity:0}
+@media(max-height:520px){.title-stack h1{font-size:clamp(25px,7vh,40px)}.title-stack .zh{margin-top:12px}.subtitle-en{margin-top:16px;font-size:16px}.subtitle-zh{margin-top:10px;font-size:14px}.title-stack button{margin-top:14px;padding:10px 18px}}
+@media(prefers-reduced-motion:reduce){#title.play .reveal{animation:none;opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -35,9 +51,14 @@ main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transitio
 <div class="shade"></div><div class="frame"></div>
 <div class="brand">B A B E L &nbsp; / &nbsp; A R C H I V E</div>
 <section id="gate"><p class="small">AN ARCHIVE OF HUMANITY</p><div class="rule"></div><button id="start">BEGIN / 開始</button><p class="hint">建議佩戴耳機<br><span lang="en">Headphones recommended</span></p></section>
-<section id="title" class="invisible" hidden><h1>A THOUSAND<br>REFRACTIONS</h1><div class="zh">千重折光</div></section>
-<section id="lineSection" class="invisible" hidden><p class="tagline">Every life leaves a record.<br>Every record leaves an interpretation.</p></section>
-<section id="archiveSection" class="invisible" hidden><button id="enter">OPEN THE ARCHIVE / 開啟檔案</button></section>
+<section id="title" class="invisible" hidden>
+<div class="title-stack">
+<h1><span class="reveal" style="--delay:0s">A THOUSAND</span><span class="reveal" style="--delay:.35s">REFRACTIONS</span></h1>
+<div class="zh reveal" style="--delay:.8s">千　重　折　光</div>
+<p class="subtitle-en reveal" style="--delay:1.65s">Every life leaves a record.<br>Every record leaves an interpretation.</p>
+<p class="subtitle-zh reveal" style="--delay:2.35s">每段人生都會留下紀錄。<br>每份紀錄，都會留下不同的詮釋。</p>
+<button id="enter" class="reveal" style="--delay:3.2s" disabled>OPEN THE ARCHIVE</button>
+</div></section>
 <section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號，<br>卻未能留下他自己的名字。</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
 <div class="controls"><button id="skip" hidden>SKIP / 跳過</button><button id="replay" hidden>REPLAY / 重播</button><button id="sound" hidden aria-pressed="false">SOUND OFF</button></div>
 </main>
@@ -47,7 +68,7 @@ main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transitio
 'use strict';
 // Add your own licensed soundtrack path here, e.g. 'music/intro.mp3'.
 const MUSIC_PATH = '';
-const DURATION=10.8, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DURATION=10.0, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $=id=>document.getElementById(id), c=$('scene'), ctx=c.getContext('2d'),music=$('music');
 let mode='gate',start=0,w=0,h=0,dpr=1,raf=0,soundOn=false;
 const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)};
@@ -60,11 +81,31 @@ const dust=Array.from({length:120},(_,i)=>({x:rand(i,1),y:rand(i,2),r:.3+rand(i,
 const objects=Array.from({length:96},(_,i)=>({x:(rand(i,5)-.5)*9,y:(rand(i,6)-.5)*6,z:3+rand(i,7)*29,spin:(rand(i,8)-.5)*1.4,word:glyphs[i%glyphs.length],page:i%5===0,color:colors[i%7],index:i}));
 function resize(){dpr=Math.min(devicePixelRatio||1,2);w=$('stage').clientWidth;h=$('stage').clientHeight;c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)} resize();addEventListener('resize',resize);
 function beam(x,y,x2,y2,color,alpha,width){ctx.save();ctx.globalAlpha=clamp(alpha);let g=ctx.createLinearGradient(x,y,x2,y2);g.addColorStop(0,color);g.addColorStop(.72,color);g.addColorStop(1,'#ffffff00');ctx.strokeStyle=g;ctx.lineWidth=width;ctx.shadowColor=color;ctx.shadowBlur=14;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
-function crystal(t,scale,alpha){let cx=w*.5,cy=h*.48,s=Math.min(w,h)*.13*scale,a=t*.28;
-const vertices=[[0,-1.5,0],[0,1.5,0],[-.85,-.35,-.85],[.85,-.35,-.85],[.85,-.35,.85],[-.85,-.35,.85],[-.75,.45,-.75],[.75,.45,-.75],[.75,.45,.75],[-.75,.45,.75]];
-const p=vertices.map(([X,Y,Z])=>{let x=X*Math.cos(a)+Z*Math.sin(a),z=Z*Math.cos(a)-X*Math.sin(a);let q=1/(1-z*.14);return [cx+x*s*q,cy+(Y-z*.22)*s*q,z]});
-let faces=[[0,2,3],[0,3,4],[0,4,5],[0,5,2],[2,3,7,6],[3,4,8,7],[4,5,9,8],[5,2,6,9],[1,6,7],[1,7,8],[1,8,9],[1,9,6]];faces.sort((a,b)=>a.reduce((z,i)=>z+p[i][2],0)/a.length-b.reduce((z,i)=>z+p[i][2],0)/b.length);
-ctx.save();ctx.globalAlpha=alpha;faces.forEach((f,i)=>{ctx.beginPath();f.forEach((j,k)=>k?ctx.lineTo(...p[j].slice(0,2)):ctx.moveTo(...p[j].slice(0,2)));ctx.closePath();let g=ctx.createLinearGradient(cx-s,cy-s,cx+s,cy+s);g.addColorStop(0,'#e5efff44');g.addColorStop(.5,colors[i%7]+'15');g.addColorStop(1,'#64758a32');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#d7e5f3a8';ctx.lineWidth=Math.min(2,scale*.7);ctx.stroke()});ctx.restore();
+function crystal(t,scale,alpha){
+ if(alpha<=.001)return;
+ const cx=w*.5,cy=h*.48,s=Math.min(w,h)*.13*scale,a=t*.34;
+ // Three rings of alternating vertices form a faceted, tapered gemstone.
+ const v=[[0,-1.65,0],[0,1.65,0]],N=8;
+ [[-.82,.61,0],[-.28,1,Math.PI/8],[.48,.82,0],[.91,.48,Math.PI/8]].forEach(([y,r,offset])=>{for(let i=0;i<N;i++){let q=i*Math.PI*2/N+offset;v.push([Math.cos(q)*r,y,Math.sin(q)*r])}});
+ const p=v.map(([X,Y,Z])=>{let x=X*Math.cos(a)+Z*Math.sin(a),z=Z*Math.cos(a)-X*Math.sin(a),q=1/(1-z*.16);return [cx+x*s*q,cy+(Y-z*.18)*s*q,z]});
+ const faces=[];
+ for(let i=0;i<N;i++){let j=(i+1)%N;faces.push([0,2+i,2+j],[1,26+i,26+j]);for(let ring=0;ring<3;ring++){let b=2+ring*N;faces.push([b+i,b+j,b+N+i],[b+j,b+N+j,b+N+i])}}
+ faces.sort((f,g)=>f.reduce((sum,i)=>sum+p[i][2],0)/f.length-g.reduce((sum,i)=>sum+p[i][2],0)/g.length);
+ ctx.save();ctx.globalAlpha=alpha;
+ const halo=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(1,s*1.9));halo.addColorStop(0,'#8cc4e72a');halo.addColorStop(.55,'#a9c5e00b');halo.addColorStop(1,'#a9c5e000');ctx.fillStyle=halo;ctx.fillRect(0,0,w,h);
+ faces.forEach((f,i)=>{
+ const pts=f.map(j=>p[j]),z=pts.reduce((sum,q)=>sum+q[2],0)/3;
+ ctx.beginPath();pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();
+ let g=ctx.createLinearGradient(pts[0][0],pts[0][1],pts[1][0],pts[1][1]);
+ const light=.09+.19*rand(i,68)+Math.max(0,z)*.07;
+ g.addColorStop(0,'rgba(230,246,255,'+light+')');g.addColorStop(.45,colors[i%7]+(i%4===0?'45':'16'));g.addColorStop(1,'rgba(25,46,70,.10)');
+ ctx.fillStyle=g;ctx.fill();
+ ctx.strokeStyle=i%9===0?'#f5fcffbc':'#d8e9f345';ctx.lineWidth=i%9===0?1.05:.48;ctx.stroke();
+ if(i%7===0){ctx.save();ctx.clip();let q=pts[0],r=pts[2];let stripe=ctx.createLinearGradient(q[0],q[1],r[0],r[1]);stripe.addColorStop(0,'#ffffff00');stripe.addColorStop(.49,'#ffffff40');stripe.addColorStop(.55,'#b5dfff08');stripe.addColorStop(1,'#ffffff00');ctx.fillStyle=stripe;ctx.fillRect(0,0,w,h);ctx.restore()}
+ });
+ // Bright specular glints at selected vertices, without flashing.
+ for(let i=2;i<p.length;i+=7){const [x,y,z]=p[i];if(z<.2)continue;let rad=Math.min(24,Math.max(3,s*.09));let g=ctx.createRadialGradient(x,y,0,x,y,rad);g.addColorStop(0,'#f7fcffb0');g.addColorStop(.18,'#d8ecff45');g.addColorStop(1,'#d8ecff00');ctx.fillStyle=g;ctx.fillRect(x-rad,y-rad,rad*2,rad*2)}
+ ctx.restore();
 }
 // Cached, seeded papyrus textures: no frame-to-frame noise.
 const paperTextures=new Map();
@@ -81,7 +122,27 @@ function paperTexture(seed){
  q.fillStyle='#453323b8';q.font='15px Georgia, serif';q.textAlign='center';let chars=scripts[seed%scripts.length].split(' ');for(let j=0;j<11;j++){let row=Array.from({length:7},(_,n)=>chars[(j*3+n)%chars.length]).join(' ');q.fillText(row,120,44+j*22,190)}
  q.restore();q.strokeStyle='#59402c88';q.lineWidth=2;q.stroke();paperTextures.set(seed,p);return p;
 }
-function documentPage(o,x,y,k,t,alpha){const width=k*1.55,height=k*2.05;if(width<8)return;ctx.save();ctx.translate(x,y);ctx.rotate(o.spin*.45+Math.sin(t*.5+o.index)*.16);ctx.scale(.3+.7*Math.abs(Math.cos(t*.8+o.index)),1);ctx.globalAlpha=clamp(alpha*.9);ctx.drawImage(paperTexture(o.index),-width/2,-height/2,width,height);ctx.restore()}
+// Bend the cached paper texture in narrow strips, rather than rotating a rigid card.
+// Strip positions and shading are derived from a travelling wave.
+function documentPage(o,x,y,k,t,alpha){
+ const pw=k*1.58,ph=k*2.06;if(pw<8||alpha<.01)return;
+ const tex=paperTexture(o.index),n=22,phase=t*1.65+o.index*.81,turn=Math.cos(t*.48+o.index*.71);
+ const angle=o.spin*.55+Math.sin(t*.77+o.index)*.18;
+ ctx.save();ctx.translate(x,y+Math.sin(phase*.65)*ph*.035);ctx.rotate(angle);ctx.globalAlpha=clamp(alpha*.88);
+ const local=u=>{let bend=Math.sin(u*4.1+phase)*.15+Math.sin(u*7.8-phase*.55)*.04;return {x:(u-.5)*pw*turn+bend*pw*(.65+.35*Math.abs(turn)),y:Math.sin(u*4.4+phase)*ph*.065,sy:1+Math.sin(u*4.2+phase)*.065}};
+ let strips=[];for(let j=0;j<n;j++){let u=j/n,v=(j+1)/n,a=local(u),b=local(v);strips.push({j,a,b,depth:Math.sin((u+v)*2+phase)})}
+ strips.sort((a,b)=>a.depth-b.depth);
+ for(const {j,a,b} of strips){let dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<.12)continue;let sw=tex.width/n;
+ ctx.save();
+ // Each slice has an independent shear and vertical stretch; the paper ripples along its width.
+ ctx.transform(dx/sw,dy/sw,0,(a.sy+b.sy)/2, a.x,a.y);
+ ctx.drawImage(tex,j*sw,0,Math.min(sw+.7,tex.width-j*sw),tex.height,0,-ph/2,sw+.7,ph);
+ // Soft fold shadows follow the same texture and preserve transparent edges.
+ ctx.globalCompositeOperation='source-over';
+ ctx.restore();
+ }
+ ctx.restore();
+}
 function draw(now){const t=mode==='intro'?(now-start)/1000:0;const cx=w*.5,cy=h*.48,m=Math.min(w,h);ctx.clearRect(0,0,w,h);ctx.fillStyle='#07080c';ctx.fillRect(0,0,w,h);
 const ambient=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.7);ambient.addColorStop(0,mode==='intro'?'#141a29':'#241b13');ambient.addColorStop(1,'#070709');ctx.fillStyle=ambient;ctx.fillRect(0,0,w,h);
 for(const p of dust){ctx.globalAlpha=p.a*.33;ctx.fillStyle='#d7c7ae';ctx.beginPath();ctx.arc(p.x*w,(p.y*h+(reduced?0:now/1000*3))%h,p.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
@@ -94,7 +155,7 @@ if(mode==='intro'){
  crystal(t,Math.min(45,9.4/distance),a);
  // Peripheral converging light trails reinforce forward motion.
  for(let i=0;i<20;i++){let angle=i*Math.PI*2/20,rad=m*(.22+rand(i,45)*.5),stretch=flight*rad*.75;let x=cx+Math.cos(angle)*rad,y=cy+Math.sin(angle)*rad;beam(x,y,x+Math.cos(angle)*stretch,y+Math.sin(angle)*stretch,'#e8f0ff',a*flight*.19,1.4)}
- const inside=smooth((t-2.45)/.65)*(1-smooth((t-8.5)/2.1));
+ const inside=smooth((t-2.45)/.65)*(1-smooth((t-7.1)/2.8));
  // Dispersion begins at the contact plane and expands around the viewer.
  for(let i=0;i<7;i++){let theta=i*Math.PI*2/7,spread=contact*(1-smooth((t-4.5)/1.4));beam(cx,cy,cx+Math.cos(theta)*w*spread,cy+Math.sin(theta)*h*spread,colors[i],spread*.75,2)}
  if(inside>0){const travel=Math.max(0,t-2.5)*4.5,focal=m*.83;
@@ -106,8 +167,9 @@ if(mode==='intro'){
  }
  // A gentle luminous transition, not a rapid flash.
  let veil=Math.exp(-Math.pow((t-2.65)/.38,2))*.22;ctx.fillStyle='rgba(221,232,255,'+veil+')';ctx.fillRect(0,0,w,h);
+ const dissolve=smooth((t-7.25)/2.75);ctx.fillStyle='rgba(9,8,7,'+dissolve+')';ctx.fillRect(0,0,w,h);
  if(t>=DURATION)showTitle();
-}else if(mode==='title'){crystal(2.4,1.8,.10)}
+}else if(mode==='title'){ctx.fillStyle='#090807';ctx.fillRect(0,0,w,h)}
 raf=requestAnimationFrame(draw);
 }
 function hide(id){const e=$(id);e.classList.add('invisible');e.hidden=true}
@@ -116,14 +178,19 @@ let timers=[],sequence=0;
 function cancelSequence(){sequence++;timers.forEach(clearTimeout);timers=[]}
 function later(fn,ms){const token=sequence;timers.push(setTimeout(()=>{if(token===sequence)fn()},ms))}
 function fadeOut(id,next){$(id).classList.add('invisible');later(()=>{hide(id);next()},reduced?0:1400)}
-function showArchive(){mode='title';$('stage').classList.remove('travelling');show('archiveSection');$('replay').hidden=false}
-function showTitle(){cancelSequence();mode='title';hide('gate');hide('prologue');hide('lineSection');hide('archiveSection');show('title');$('skip').hidden=true;$('replay').hidden=false;later(()=>fadeOut('title',()=>{show('lineSection');later(()=>fadeOut('lineSection',showArchive),4200)}),3600)}
-function begin(){cancelSequence();['gate','title','lineSection','archiveSection','prologue'].forEach(hide);mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
+function showArchive(){showTitle()}
+function showTitle(){
+ cancelSequence();mode='title';
+ $('stage').classList.remove('travelling');$('stage').classList.add('title-view');
+ hide('gate');hide('prologue');const panel=$('title');panel.classList.remove('play');panel.hidden=false;panel.classList.remove('invisible');$('enter').disabled=true;void panel.offsetWidth;panel.classList.add('play');
+ $('skip').hidden=true;$('replay').hidden=false;later(()=>{$('enter').disabled=false},reduced?0:4450);
+}
+function begin(){cancelSequence();['gate','title','prologue'].forEach(hide);$('title').classList.remove('play');$('stage').classList.remove('title-view');mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
 function toggleSound(){if(!MUSIC_PATH)return;if(soundOn){music.pause();soundOn=false}else{music.play().then(()=>{soundOn=true;updateSound()}).catch(()=>{soundOn=false;updateSound()});}updateSound()}
 function updateSound(){$('sound').textContent=soundOn?'SOUND ON':'SOUND OFF';$('sound').setAttribute('aria-pressed',String(soundOn))}
 if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史。'}
 $('start').onclick=()=>{if(MUSIC_PATH&&!soundOn)toggleSound();begin()};$('skip').onclick=showTitle;$('replay').onclick=begin;
-$('enter').onclick=()=>{cancelSequence();hide('archiveSection');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
+$('enter').onclick=()=>{cancelSequence();hide('title');$('stage').classList.remove('title-view');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
 raf=requestAnimationFrame(draw);
 })();
 </script>
