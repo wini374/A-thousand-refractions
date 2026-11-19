@@ -26,6 +26,7 @@ button{font:inherit;color:var(--gold);background:#100e0bc9;border:1px solid #b9a
 @media(max-width:600px){.brand{letter-spacing:.28em}.controls{right:24px;bottom:24px}h1{letter-spacing:.065em}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition-duration:.01ms!important}}
 main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transition:opacity 1s} main.travelling .shade{background:radial-gradient(ellipse at center,transparent 45%,#08070655 100%)}
+#lineSection,#archiveSection{position:relative;text-align:center;width:min(90%,850px);padding:28px 12px;transition:opacity 1.4s ease,transform 1.4s ease}.tagline{font-size:clamp(17px,3vw,27px);line-height:1.9;color:#e6ddcc;font-style:italic}main.travelling .shade{opacity:.6}
 </style>
 </head>
 <body>
@@ -34,7 +35,9 @@ main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transitio
 <div class="shade"></div><div class="frame"></div>
 <div class="brand">B A B E L &nbsp; / &nbsp; A R C H I V E</div>
 <section id="gate"><p class="small">AN ARCHIVE OF HUMANITY</p><div class="rule"></div><button id="start">BEGIN / 開始</button><p class="hint">建議佩戴耳機<br><span lang="en">Headphones recommended</span></p></section>
-<section id="title" class="invisible" hidden><h1>A THOUSAND<br>REFRACTIONS</h1><div class="zh">千重折光</div><div class="rule"></div><p id="subtitle">History remembers in fragments.<br>歷史總以碎片的形式留下記憶。</p><button id="enter">OPEN THE ARCHIVE / 開啟檔案</button></section>
+<section id="title" class="invisible" hidden><h1>A THOUSAND<br>REFRACTIONS</h1><div class="zh">千重折光</div></section>
+<section id="lineSection" class="invisible" hidden><p class="tagline">Every life leaves a record.<br>Every record leaves an interpretation.</p></section>
+<section id="archiveSection" class="invisible" hidden><button id="enter">OPEN THE ARCHIVE / 開啟檔案</button></section>
 <section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號，<br>卻未能留下他自己的名字。</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
 <div class="controls"><button id="skip" hidden>SKIP / 跳過</button><button id="replay" hidden>REPLAY / 重播</button><button id="sound" hidden aria-pressed="false">SOUND OFF</button></div>
 </main>
@@ -44,7 +47,7 @@ main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transitio
 'use strict';
 // Add your own licensed soundtrack path here, e.g. 'music/intro.mp3'.
 const MUSIC_PATH = '';
-const DURATION=22, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DURATION=10.8, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $=id=>document.getElementById(id), c=$('scene'), ctx=c.getContext('2d'),music=$('music');
 let mode='gate',start=0,w=0,h=0,dpr=1,raf=0,soundOn=false;
 const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)};
@@ -54,7 +57,7 @@ const scripts=['卜 日 月 山 川 人 王 甲 乙','𓂀 𓆣 𓇳 𓊹 𓋹 �
 const glyphs=scripts.flatMap(s=>s.split(' '));
 const rand=(i,k)=>{let a=Math.sin(i*127.1+k*311.7)*43758.5453;return a-Math.floor(a)};
 const dust=Array.from({length:120},(_,i)=>({x:rand(i,1),y:rand(i,2),r:.3+rand(i,3)*1.1,a:.15+rand(i,4)*.5}));
-const objects=Array.from({length:145},(_,i)=>({x:(rand(i,5)-.5)*9,y:(rand(i,6)-.5)*6,z:3+rand(i,7)*29,spin:(rand(i,8)-.5)*1.4,word:glyphs[i%glyphs.length],page:i%11===0,color:colors[i%7],index:i}));
+const objects=Array.from({length:96},(_,i)=>({x:(rand(i,5)-.5)*9,y:(rand(i,6)-.5)*6,z:3+rand(i,7)*29,spin:(rand(i,8)-.5)*1.4,word:glyphs[i%glyphs.length],page:i%5===0,color:colors[i%7],index:i}));
 function resize(){dpr=Math.min(devicePixelRatio||1,2);w=$('stage').clientWidth;h=$('stage').clientHeight;c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)} resize();addEventListener('resize',resize);
 function beam(x,y,x2,y2,color,alpha,width){ctx.save();ctx.globalAlpha=clamp(alpha);let g=ctx.createLinearGradient(x,y,x2,y2);g.addColorStop(0,color);g.addColorStop(.72,color);g.addColorStop(1,'#ffffff00');ctx.strokeStyle=g;ctx.lineWidth=width;ctx.shadowColor=color;ctx.shadowBlur=14;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
 function crystal(t,scale,alpha){let cx=w*.5,cy=h*.48,s=Math.min(w,h)*.13*scale,a=t*.28;
@@ -63,41 +66,64 @@ const p=vertices.map(([X,Y,Z])=>{let x=X*Math.cos(a)+Z*Math.sin(a),z=Z*Math.cos(
 let faces=[[0,2,3],[0,3,4],[0,4,5],[0,5,2],[2,3,7,6],[3,4,8,7],[4,5,9,8],[5,2,6,9],[1,6,7],[1,7,8],[1,8,9],[1,9,6]];faces.sort((a,b)=>a.reduce((z,i)=>z+p[i][2],0)/a.length-b.reduce((z,i)=>z+p[i][2],0)/b.length);
 ctx.save();ctx.globalAlpha=alpha;faces.forEach((f,i)=>{ctx.beginPath();f.forEach((j,k)=>k?ctx.lineTo(...p[j].slice(0,2)):ctx.moveTo(...p[j].slice(0,2)));ctx.closePath();let g=ctx.createLinearGradient(cx-s,cy-s,cx+s,cy+s);g.addColorStop(0,'#e5efff44');g.addColorStop(.5,colors[i%7]+'15');g.addColorStop(1,'#64758a32');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#d7e5f3a8';ctx.lineWidth=Math.min(2,scale*.7);ctx.stroke()});ctx.restore();
 }
-function documentPage(o,x,y,k,t,alpha){const width=k*1.45,height=k*1.9;if(width<8)return;ctx.save();ctx.translate(x,y);ctx.rotate(o.spin*.45+Math.sin(t*.5+o.index)*.16);const flip=.24+.76*Math.abs(Math.cos(t*.8+o.index));ctx.scale(flip,1);ctx.globalAlpha=clamp(alpha*.8);let g=ctx.createLinearGradient(-width/2,0,width/2,height);g.addColorStop(0,'#d8c39d');g.addColorStop(.55,'#a88e65');g.addColorStop(1,'#665139');ctx.fillStyle=g;ctx.fillRect(-width/2,-height/2,width,height);ctx.strokeStyle='#e7d6ad88';ctx.strokeRect(-width/2,-height/2,width,height);ctx.fillStyle='#493820';ctx.textAlign='center';ctx.font=Math.max(3,k*.105)+'px Georgia, serif';let chars=scripts[o.index%scripts.length].split(' ');for(let j=0;j<9;j++){let row=Array.from({length:5},(_,n)=>chars[(j*3+n)%chars.length]).join(' ');ctx.fillText(row,0,-height*.35+j*height*.08,width*.82)}ctx.restore()}
+// Cached, seeded papyrus textures: no frame-to-frame noise.
+const paperTextures=new Map();
+function paperTexture(seed){
+ if(paperTextures.has(seed))return paperTextures.get(seed);
+ const p=document.createElement('canvas');p.width=240;p.height=320;const q=p.getContext('2d');
+ const palettes=[['#e2c996','#b89359','#715033'],['#d8c6a1','#aa9670','#66513f'],['#d4b279','#a47b49','#67412c'],['#c2bc91','#8f8a65','#54543d']];
+ const pal=palettes[seed%palettes.length];q.beginPath();
+ const corners=[[10,10],[230,10],[230,310],[10,310]];
+ for(let side=0;side<4;side++){const a=corners[side],b=corners[(side+1)%4];for(let j=0;j<24;j++){let u=j/24,x=a[0]+(b[0]-a[0])*u,y=a[1]+(b[1]-a[1])*u,rough=rand(seed+side*31+j,19)*12; if(side===0)y+=rough;if(side===1)x-=rough;if(side===2)y-=rough;if(side===3)x+=rough; if(!side&&!j)q.moveTo(x,y);else q.lineTo(x,y)}}q.closePath();q.save();q.clip();
+ const g=q.createLinearGradient(0,0,240,320);g.addColorStop(0,pal[0]);g.addColorStop(.6,pal[1]);g.addColorStop(1,pal[2]);q.fillStyle=g;q.fillRect(0,0,240,320);
+ for(let j=0;j<1700;j++){let x=rand(seed*2000+j,21)*240,y=rand(seed*2000+j,22)*320;q.strokeStyle=j%2?'#f6e2b83b':'#5f402c29';q.lineWidth=.4+rand(j,23);q.beginPath();q.moveTo(x,y);q.lineTo(x+3+rand(j,24)*17,y+(rand(j,25)-.5)*3);q.stroke()}
+ for(let j=0;j<5;j++){let x=rand(seed+j,26)*240,y=rand(seed+j,27)*320,rad=18+rand(seed+j,28)*65;let stain=q.createRadialGradient(x,y,0,x,y,rad);stain.addColorStop(0,'#76502e55');stain.addColorStop(1,'#76502e00');q.fillStyle=stain;q.fillRect(0,0,240,320)}
+ q.fillStyle='#453323b8';q.font='15px Georgia, serif';q.textAlign='center';let chars=scripts[seed%scripts.length].split(' ');for(let j=0;j<11;j++){let row=Array.from({length:7},(_,n)=>chars[(j*3+n)%chars.length]).join(' ');q.fillText(row,120,44+j*22,190)}
+ q.restore();q.strokeStyle='#59402c88';q.lineWidth=2;q.stroke();paperTextures.set(seed,p);return p;
+}
+function documentPage(o,x,y,k,t,alpha){const width=k*1.55,height=k*2.05;if(width<8)return;ctx.save();ctx.translate(x,y);ctx.rotate(o.spin*.45+Math.sin(t*.5+o.index)*.16);ctx.scale(.3+.7*Math.abs(Math.cos(t*.8+o.index)),1);ctx.globalAlpha=clamp(alpha*.9);ctx.drawImage(paperTexture(o.index),-width/2,-height/2,width,height);ctx.restore()}
 function draw(now){const t=mode==='intro'?(now-start)/1000:0;const cx=w*.5,cy=h*.48,m=Math.min(w,h);ctx.clearRect(0,0,w,h);ctx.fillStyle='#07080c';ctx.fillRect(0,0,w,h);
 const ambient=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.7);ambient.addColorStop(0,mode==='intro'?'#141a29':'#241b13');ambient.addColorStop(1,'#070709');ctx.fillStyle=ambient;ctx.fillRect(0,0,w,h);
 for(const p of dust){ctx.globalAlpha=p.a*.33;ctx.fillStyle='#d7c7ae';ctx.beginPath();ctx.arc(p.x*w,(p.y*h+(reduced?0:now/1000*3))%h,p.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
 if(mode==='intro'){
- const approach=smooth((t-5.8)/4.8),enter=smooth((t-9.0)/2),fade=1-smooth((t-18.6)/3.2);
- const a=smooth((t-.4)/1.5)*(1-enter);
- let hit=smooth((t-1.2)/1.5);
- beam(0,cy,cx*hit,cy,'#fff6e7',a,2+approach*4);
- crystal(t,1+approach*9,a);
- for(let i=0;i<7;i++){let f=smooth((t-2.4-i*.12)/1.6),endX=w*1.08,endY=cy+(i-3)*h*.16;beam(cx,cy,cx+(endX-cx)*f,cy+(endY-cy)*f,colors[i],a*f*.88,1.5+approach*2);
- for(let j=0;j<9;j++){let u=((j/9+t*.067+i*.12)%1)*f;if(u<.12)continue;ctx.save();ctx.globalAlpha=a*f*Math.sin(u*Math.PI)*.92;ctx.fillStyle=colors[i];ctx.font=(12+u*m*.026)+'px Georgia,serif';ctx.shadowColor=colors[i];ctx.shadowBlur=9;ctx.fillText(glyphs[(i*7+j)%glyphs.length],cx+(endX-cx)*u,cy+(endY-cy)*u-9);ctx.restore()}}
- const inside=smooth((t-9.4)/1.8)*fade;
- if(inside>0){const travel=Math.max(0,t-9.5)*3.1,focal=m*.83;
+ // The viewer IS the incoming ray. The camera starts moving immediately;
+ // there is no separate side-on view of a beam hitting the crystal.
+ const flight=clamp(t/2.65),distance=9.4*Math.pow(1-flight,2)+.22;
+ const contact=smooth((t-1.95)/.65),cross=smooth((t-2.35)/.5);
+ const a=smooth(t/.4)*(1-cross);
+ crystal(t,Math.min(45,9.4/distance),a);
+ // Peripheral converging light trails reinforce forward motion.
+ for(let i=0;i<20;i++){let angle=i*Math.PI*2/20,rad=m*(.22+rand(i,45)*.5),stretch=flight*rad*.75;let x=cx+Math.cos(angle)*rad,y=cy+Math.sin(angle)*rad;beam(x,y,x+Math.cos(angle)*stretch,y+Math.sin(angle)*stretch,'#e8f0ff',a*flight*.19,1.4)}
+ const inside=smooth((t-2.45)/.65)*(1-smooth((t-8.5)/2.1));
+ // Dispersion begins at the contact plane and expands around the viewer.
+ for(let i=0;i<7;i++){let theta=i*Math.PI*2/7,spread=contact*(1-smooth((t-4.5)/1.4));beam(cx,cy,cx+Math.cos(theta)*w*spread,cy+Math.sin(theta)*h*spread,colors[i],spread*.75,2)}
+ if(inside>0){const travel=Math.max(0,t-2.5)*4.5,focal=m*.83;
  // Perspective projection: documents and glyphs grow as they approach the viewer.
  const projected=objects.map(o=>({o,z:1.1+((o.z-travel)%30+30)%30})).sort((a,b)=>b.z-a.z);
  for(let i=0;i<7;i++){const theta=i*Math.PI*2/7+t*.055;beam(cx,cy,cx+Math.cos(theta)*w,cy+Math.sin(theta)*h,colors[i],inside*.16,1)}
  for(const {o,z} of projected){let k=focal/z,x=cx+(o.x+Math.sin(t*.35+o.z)*.27)*k,y=cy+(o.y+Math.cos(t*.24+o.z)*.2)*k;let depth=smooth((z-1.1)/2)*(1-smooth((z-22)/9)),opacity=inside*depth;if(x<-k*2||x>w+k*2||y<-k*2||y>h+k*2)continue;
- if(o.page)documentPage(o,x,y,k,t,opacity);else{ctx.save();ctx.globalAlpha=opacity*.85;ctx.translate(x,y);ctx.rotate(o.spin*.18);ctx.font=Math.max(8,Math.min(110,k*.5))+'px Georgia,serif';ctx.fillStyle=o.color;ctx.textAlign='center';ctx.shadowColor=o.color;ctx.shadowBlur=8;ctx.fillText(o.word,0,0);ctx.restore()}}
+ if(o.page)documentPage(o,x,y,k,t,opacity);else{ctx.save();ctx.globalAlpha=opacity*.65;ctx.translate(x,y);ctx.rotate(o.spin*.18);ctx.font=Math.max(8,Math.min(110,k*.5))+'px Georgia,serif';ctx.fillStyle=o.color;ctx.textAlign='center';ctx.shadowColor=o.color;ctx.shadowBlur=8;ctx.fillText(o.word,0,0);ctx.restore()}}
  }
  // A gentle luminous transition, not a rapid flash.
- let veil=Math.exp(-Math.pow((t-10.15)/.65,2))*.43;ctx.fillStyle='rgba(221,232,255,'+veil+')';ctx.fillRect(0,0,w,h);
+ let veil=Math.exp(-Math.pow((t-2.65)/.38,2))*.22;ctx.fillStyle='rgba(221,232,255,'+veil+')';ctx.fillRect(0,0,w,h);
  if(t>=DURATION)showTitle();
 }else if(mode==='title'){crystal(2.4,1.8,.10)}
 raf=requestAnimationFrame(draw);
 }
 function hide(id){const e=$(id);e.classList.add('invisible');e.hidden=true}
 function show(id){const e=$(id);e.hidden=false;e.classList.add('invisible');requestAnimationFrame(()=>requestAnimationFrame(()=>e.classList.remove('invisible')))}
-function showTitle(){$('stage').classList.remove('travelling');mode='title';start=performance.now();hide('gate');hide('prologue');show('title');$('skip').hidden=true;$('replay').hidden=false}
-function begin(){hide('gate');hide('title');hide('prologue');mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
+let timers=[],sequence=0;
+function cancelSequence(){sequence++;timers.forEach(clearTimeout);timers=[]}
+function later(fn,ms){const token=sequence;timers.push(setTimeout(()=>{if(token===sequence)fn()},ms))}
+function fadeOut(id,next){$(id).classList.add('invisible');later(()=>{hide(id);next()},reduced?0:1400)}
+function showArchive(){mode='title';$('stage').classList.remove('travelling');show('archiveSection');$('replay').hidden=false}
+function showTitle(){cancelSequence();mode='title';hide('gate');hide('prologue');hide('lineSection');hide('archiveSection');show('title');$('skip').hidden=true;$('replay').hidden=false;later(()=>fadeOut('title',()=>{show('lineSection');later(()=>fadeOut('lineSection',showArchive),4200)}),3600)}
+function begin(){cancelSequence();['gate','title','lineSection','archiveSection','prologue'].forEach(hide);mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
 function toggleSound(){if(!MUSIC_PATH)return;if(soundOn){music.pause();soundOn=false}else{music.play().then(()=>{soundOn=true;updateSound()}).catch(()=>{soundOn=false;updateSound()});}updateSound()}
 function updateSound(){$('sound').textContent=soundOn?'SOUND ON':'SOUND OFF';$('sound').setAttribute('aria-pressed',String(soundOn))}
 if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史。'}
 $('start').onclick=()=>{if(MUSIC_PATH&&!soundOn)toggleSound();begin()};$('skip').onclick=showTitle;$('replay').onclick=begin;
-$('enter').onclick=()=>{hide('title');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=showTitle;$('sound').onclick=toggleSound;
+$('enter').onclick=()=>{cancelSequence();hide('archiveSection');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
 raf=requestAnimationFrame(draw);
 })();
 </script>
