@@ -66,12 +66,12 @@ main.title-view .brand,main.title-view .frame{opacity:0}
 <section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號，<br>卻未能留下他自己的名字。</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
 <div class="controls"><button id="skip" hidden>SKIP / 跳過</button><button id="replay" hidden>REPLAY / 重播</button><button id="sound" hidden aria-pressed="false">SOUND OFF</button></div>
 </main>
-<audio id="music" loop preload="none"></audio>
+<audio id="music" loop preload="auto"></audio>
 <script>
 (()=>{
 'use strict';
 // Add your own licensed soundtrack path here, e.g. 'music/intro.mp3'.
-const MUSIC_PATH = '';
+const MUSIC_PATH = 'Rite_of_the_Glass_Arch.mp3';
 const DURATION=10.0, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $=id=>document.getElementById(id), c=$('scene'), ctx=c.getContext('2d'),music=$('music');
 let mode='gate',start=0,w=0,h=0,dpr=1,raf=0,soundOn=false;
@@ -210,10 +210,29 @@ function showTitle(){
  $('skip').hidden=true;$('replay').hidden=false;later(()=>{$('enter').disabled=false},reduced?0:3950);
 }
 function begin(){cancelSequence();['gate','title','prologue'].forEach(hide);$('title').classList.remove('play');$('stage').classList.remove('title-view');mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
-function toggleSound(){if(!MUSIC_PATH)return;if(soundOn){music.pause();soundOn=false}else{music.play().then(()=>{soundOn=true;updateSound()}).catch(()=>{soundOn=false;updateSound()});}updateSound()}
+music.volume=.72;
+let starting=false;
+function toggleSound(){
+ if(!MUSIC_PATH)return;
+ if(!music.paused){music.pause();return}
+ music.play().catch(()=>{updateSound()});
+}
+music.addEventListener('play',()=>{soundOn=true;updateSound()});
+music.addEventListener('pause',()=>{soundOn=false;updateSound()});
+music.addEventListener('error',()=>{soundOn=false;updateSound()});
 function updateSound(){$('sound').textContent=soundOn?'SOUND ON':'SOUND OFF';$('sound').setAttribute('aria-pressed',String(soundOn))}
 if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史。'}
-$('start').onclick=()=>{if(MUSIC_PATH&&!soundOn)toggleSound();begin()};$('skip').onclick=showTitle;$('replay').onclick=begin;
+async function startWithMusic(){
+ if(starting)return;
+ starting=true;$('start').disabled=true;
+ try{
+  if(MUSIC_PATH){music.currentTime=0;const playback=music.play();await Promise.race([playback,new Promise(resolve=>setTimeout(()=>{if(music.paused||music.readyState<2)music.pause();resolve()},1800))]);}
+ }catch(e){console.warn('Opening music unavailable:',e)}
+ finally{starting=false;$('start').disabled=false;begin()}
+}
+$('start').onclick=startWithMusic;
+$('skip').onclick=showTitle;
+$('replay').onclick=()=>{if(!music.paused){music.currentTime=0;}begin()};
 $('enter').onclick=()=>{cancelSequence();hide('title');$('stage').classList.remove('title-view');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
 raf=requestAnimationFrame(draw);
 })();
