@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0a09">
+<title>A Thousand Refractions — 千重折光</title>
+<style>
+:root{color-scheme:dark;--gold:#b9a27a;--ivory:#e6ddcc}
+*{box-sizing:border-box}body{margin:0;background:#090807;color:var(--ivory);font-family:Georgia,"Noto Serif TC","Songti TC",serif;overflow:hidden}
+main{position:relative;min-height:100vh;min-height:100dvh;isolation:isolate;display:grid;place-items:center;overflow:hidden}
+canvas,.shade{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}canvas{z-index:-2}.shade{z-index:-1;background:radial-gradient(ellipse at center,transparent 20%,#080706c9 100%)}
+.frame{position:absolute;inset:clamp(14px,3vw,38px);border:1px solid #b9a27a2e;pointer-events:none}
+.frame:before,.frame:after{content:"";position:absolute;width:36px;height:36px;border-color:#b9a27a88;border-style:solid}.frame:before{left:-1px;top:-1px;border-width:1px 0 0 1px}.frame:after{right:-1px;bottom:-1px;border-width:0 1px 1px 0}
+.brand{position:absolute;top:clamp(32px,6vh,62px);left:0;right:0;text-align:center;font-size:10px;letter-spacing:.45em;color:#b9a27a9c}
+#gate,#title,#prologue{position:relative;text-align:center;width:min(90%,850px);padding:28px 12px;transition:opacity 1.8s ease,transform 1.8s ease}
+[hidden]{display:none!important}.invisible{opacity:0;transform:translateY(12px);pointer-events:none}
+h1{font-size:clamp(29px,6.5vw,78px);font-weight:400;letter-spacing:.12em;line-height:1.16;margin:0;text-shadow:0 0 40px #e2c89836}
+.zh{font-size:clamp(16px,2.7vw,26px);letter-spacing:.7em;padding-left:.7em;color:var(--gold);margin:24px 0}
+.rule{height:1px;width:110px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:28px auto}
+button{font:inherit;color:var(--gold);background:#100e0bc9;border:1px solid #b9a27670;padding:14px 24px;letter-spacing:.19em;cursor:pointer;min-height:48px;transition:background .3s,color .3s}button:hover,button:focus-visible{background:#b9a27a;color:#100e0b;outline:1px solid var(--ivory);outline-offset:4px}
+.small{font-size:11px;letter-spacing:.22em;color:#b9a27a9c;line-height:2}.hint{font-size:13px;color:#b9a27a;margin:18px auto;line-height:1.9}
+.controls{position:absolute;bottom:max(30px,env(safe-area-inset-bottom));right:max(30px,env(safe-area-inset-right));display:flex;gap:10px;z-index:4}.controls button{font-size:10px;min-height:40px;padding:8px 13px}
+#subtitle{font-size:clamp(12px,2vw,16px);font-style:italic;color:#d7c9ac;line-height:1.9}
+#prologue h2{font-weight:400;font-size:clamp(26px,5vw,48px);letter-spacing:.12em}#prologue p{line-height:2.1}#prologue .note{font-size:12px;letter-spacing:.16em;color:#b9a27a}
+#book{position:absolute;width:min(66vw,760px);height:min(50vh,440px);left:50%;top:49%;transform:translate(-50%,-50%);perspective:1300px;opacity:0;pointer-events:none;z-index:-1;transition:opacity 1.4s}
+.leaf{position:absolute;inset:0 0 0 50%;transform-origin:left center;transform-style:preserve-3d;will-change:transform}
+.paper{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;padding:8% 9%;color:#3d2e20;background:radial-gradient(ellipse at 20% 12%,#e6d4ac,#aa8b5d 85%);border:1px solid #a78b5c;box-shadow:inset 12px 0 22px #4e341b66,inset 0 0 35px #6d4f3355}
+.paper.back{transform:rotateY(180deg)}.paper .stamp{font:9px Georgia,serif;letter-spacing:.18em;border-bottom:1px solid #644b3455;padding-bottom:10px;margin-bottom:12px}.marks{font-size:clamp(13px,2.2vw,27px);line-height:1.45;letter-spacing:.16em;overflow-wrap:anywhere;opacity:.72}.paper .lines{margin-top:10px;height:25%;background:repeating-linear-gradient(180deg,#684d333b 0 1px,transparent 1px 9px)}
+.leftpage{position:absolute;inset:0 50% 0 0;background:radial-gradient(ellipse at right,#987b50,#d1bc91 70%,#b49a6c);box-shadow:inset -13px 0 24px #392b1b99;overflow:hidden;padding:7%;color:#443020}
+@media(max-width:600px){#book{width:86vw;height:34vh}.paper{padding:9% 6%}.brand{letter-spacing:.28em}.controls{right:24px;bottom:24px}h1{letter-spacing:.065em}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<main id="stage">
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="book" aria-hidden="true"><div class="leftpage"><div class="marks">Ϲ Ω Δ Λ<br>𓂀 𓆣 𓇳<br>甲 卜 日 月</div><div class="lines"></div></div></div>
+<div class="shade"></div><div class="frame"></div>
+<div class="brand">B A B E L &nbsp; / &nbsp; A R C H I V E</div>
+<section id="gate"><p class="small">AN ARCHIVE OF HUMANITY</p><div class="rule"></div><button id="start">BEGIN / 開始</button><p class="hint">建議佩戴耳機<br><span lang="en">Headphones recommended</span></p></section>
+<section id="title" class="invisible" hidden><h1>A THOUSAND<br>REFRACTIONS</h1><div class="zh">千重折光</div><div class="rule"></div><p id="subtitle">History remembers in fragments.<br>歷史總以碎片的形式留下記憶。</p><button id="enter">OPEN THE ARCHIVE / 開啟檔案</button></section>
+<section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號，<br>卻未能留下他自己的名字。</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
+<div class="controls"><button id="skip" hidden>SKIP / 跳過</button><button id="replay" hidden>REPLAY / 重播</button><button id="sound" hidden aria-pressed="false">SOUND OFF</button></div>
+</main>
+<audio id="music" loop preload="none"></audio>
+<script>
+(()=>{
+'use strict';
+// Add your own licensed soundtrack path here, e.g. 'music/intro.mp3'.
+const MUSIC_PATH = '';
+const DURATION=19, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=id=>document.getElementById(id), c=$('scene'), ctx=c.getContext('2d'),book=$('book'),music=$('music');
+let mode='gate',start=0,w=0,h=0,dpr=1,raf=0,soundOn=false;
+const clamp=n=>Math.max(0,Math.min(1,n)),smooth=n=>{n=clamp(n);return n*n*(3-2*n)};
+const scripts=[
+['INSCRIPTION / I','卜 日 月 山 川 人 王 之 甲 乙','INCISED RECORD'],
+['FRAGMENT / II','𓂀 𓆣 𓇳 𓊹 𓋹 𓆓 𓈖 𓏏','RECOVERED COPY'],
+['TRANSCRIPTION / III','Α Ω Δ Λ Ξ Ε Θ Σ Π Φ Ψ Γ','TRANSLATION VARIANT'],
+['MANUSCRIPT / IV','M D C L X V I · A E N T R S','ANNOTATED COPY'],
+['RECORD / V','■ ■ ■  ·  𓂀  Δ  卜  Ω','NAME UNRESOLVED']
+];
+// Decorative character samples, not translations or authentic historical passages.
+const leaves=scripts.map((data,i)=>{
+ const el=document.createElement('div');el.className='leaf';el.style.zIndex=String(10+i);
+ for(const side of ['front','back']){const p=document.createElement('div');p.className='paper '+side;const stamp=document.createElement('div');stamp.className='stamp';stamp.textContent=data[0];const marks=document.createElement('div');marks.className='marks';marks.textContent=Array(4).fill(data[1]).join('  ');const lines=document.createElement('div');lines.className='lines';p.append(stamp,marks,lines);el.append(p)}book.append(el);return el;
+});
+const dust=Array.from({length:90},()=>({x:Math.random(),y:Math.random(),r:.3+Math.random()*1.2,s:Math.random()*8+2,a:Math.random()*.5+.1}));
+const glyphs=['卜','日','月','山','𓂀','𓆣','𓇳','𓋹','Α','Ω','Δ','Λ','Ⅹ','■'];
+const colors=['#e8a392','#e3c087','#d6dba1','#a0c9b5','#9ab7e1','#b2a3dd','#cf9cc5'];
+function resize(){dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=$('stage').clientHeight;c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)} resize();addEventListener('resize',resize);
+function line(x,y,x2,y2,color,width=1,blur=0){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.shadowBlur=blur;ctx.shadowColor=color;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x2,y2);ctx.stroke();ctx.shadowBlur=0}
+function draw(now){
+ const t=mode==='intro'?(now-start)/1000:mode==='gate'?0:19+(now-start)/1000*.06;
+ ctx.clearRect(0,0,w,h);ctx.fillStyle='#090807';ctx.fillRect(0,0,w,h);
+ const cx=w*.5,cy=h*.48,s=Math.min(w,h)*.145;
+ const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.65);glow.addColorStop(0,'#302519');glow.addColorStop(.5,'#15110d');glow.addColorStop(1,'#090807');ctx.globalAlpha=.65;ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
+ for(const p of dust){ctx.globalAlpha=p.a*.55;ctx.fillStyle='#d6c09a';ctx.beginPath();ctx.arc(p.x*w,(p.y*h+now/1000*p.s)%h,p.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ const ba=mode==='intro'?smooth((t-2)/1.3)*(1-smooth((t-10)/2.5)):0;book.style.opacity=ba;
+ leaves.forEach((el,i)=>{const f=smooth((t-3-i*1.25)/1.15);el.style.transform='rotateY('+(-180*f)+'deg)';el.style.zIndex=String(f>.5?i:20-i)});
+ const ga=mode==='gate'||mode==='prologue'?0:smooth((t-6)/2)*(1-smooth((t-15)/3));
+ for(let i=0;i<48;i++){const x=w*(.08+((i*37)%89)/100),y=((i*71)%113)/113*h;ctx.globalAlpha=ga*(.13+.09*Math.sin(t+i));ctx.font=(16+i%4*6)+'px Georgia, serif';ctx.fillStyle='#d6bc8c';ctx.fillText(glyphs[i%glyphs.length],x+Math.sin(t*.35+i)*15,y+Math.cos(t*.2+i)*12)}ctx.globalAlpha=1;
+ const pa=mode==='gate'||mode==='prologue'?0:smooth((t-8)/3)*(1-.83*smooth((t-16)/3));
+ if(pa>0){
+ let angle=reduced?.5:t*.24, vertices=[[0,-1.4,0],[0,1.4,0],[-.85,-.35,-.85],[.85,-.35,-.85],[.85,-.35,.85],[-.85,-.35,.85],[-.75,.45,-.75],[.75,.45,-.75],[.75,.45,.75],[-.75,.45,.75]];
+ let p=vertices.map(([X,Y,Z])=>{let a=X*Math.cos(angle)+Z*Math.sin(angle),b=Z*Math.cos(angle)-X*Math.sin(angle);return [cx+a*s,cy+(Y*.96-b*.22)*s,b]});
+ let faces=[[0,2,3],[0,3,4],[0,4,5],[0,5,2],[2,3,7,6],[3,4,8,7],[4,5,9,8],[5,2,6,9],[1,6,7],[1,7,8],[1,8,9],[1,9,6]];
+ faces.sort((a,b)=>a.reduce((z,i)=>z+p[i][2],0)/a.length-b.reduce((z,i)=>z+p[i][2],0)/b.length);
+ ctx.globalAlpha=pa;faces.forEach((f,i)=>{ctx.beginPath();f.forEach((j,k)=>k?ctx.lineTo(p[j][0],p[j][1]):ctx.moveTo(p[j][0],p[j][1]));ctx.closePath();ctx.fillStyle='rgba(173,196,210,'+(.035+i*.009)+')';ctx.fill();ctx.strokeStyle='#cbd7dc99';ctx.lineWidth=.8;ctx.stroke()});
+ let beam=smooth((t-11)/2);ctx.globalAlpha=pa*beam;
+ const grad=ctx.createLinearGradient(0,cy,cx,cy);grad.addColorStop(0,'#ffffff00');grad.addColorStop(1,'#fff7df');ctx.strokeStyle=grad;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(cx,cy);ctx.stroke();
+ colors.forEach((color,i)=>{ctx.globalAlpha=pa*beam*.7;let yy=cy+(i-3)*h*.095;const g=ctx.createLinearGradient(cx,cy,w,yy);g.addColorStop(0,color);g.addColorStop(1,color+'00');ctx.strokeStyle=g;ctx.lineWidth=2;ctx.shadowBlur=14;ctx.shadowColor=color;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(w,yy);ctx.stroke();ctx.shadowBlur=0});
+ ctx.globalAlpha=1;
+ }
+ if(mode==='intro'&&t>=DURATION)showTitle();
+ raf=requestAnimationFrame(draw);
+}
+function hide(id){const e=$(id);e.classList.add('invisible');e.hidden=true}
+function show(id){const e=$(id);e.hidden=false;e.classList.add('invisible');requestAnimationFrame(()=>requestAnimationFrame(()=>e.classList.remove('invisible')))}
+function showTitle(){mode='title';start=performance.now();hide('gate');hide('prologue');show('title');$('skip').hidden=true;$('replay').hidden=false}
+function begin(){hide('gate');hide('title');hide('prologue');mode='intro';start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
+function toggleSound(){if(!MUSIC_PATH)return;if(soundOn){music.pause();soundOn=false}else{music.play().then(()=>{soundOn=true;updateSound()}).catch(()=>{soundOn=false;updateSound()});}updateSound()}
+function updateSound(){$('sound').textContent=soundOn?'SOUND ON':'SOUND OFF';$('sound').setAttribute('aria-pressed',String(soundOn))}
+if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史。'}
+$('start').onclick=()=>{if(MUSIC_PATH&&!soundOn)toggleSound();begin()};$('skip').onclick=showTitle;$('replay').onclick=begin;
+$('enter').onclick=()=>{hide('title');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=showTitle;$('sound').onclick=toggleSound;
+raf=requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
