@@ -87,6 +87,53 @@ html[lang="en"] .document.handwritten p{font-size:clamp(24px,3.2vw,30px);line-he
 html[lang="en"] .document.handwritten blockquote{font-size:clamp(25px,3.6vw,34px)}
 .private-opening:before{content:"RESTRICTED DOCUMENT PACKET / PERSONAL ACCESS";display:block;font:10px Georgia,serif;letter-spacing:.12em;color:#c9ab83;border-bottom:1px solid #9e805655;margin-bottom:24px;padding-bottom:16px}
 @media(max-width:600px){.document{padding:38px 28px;min-height:480px}.document .kicker{font-size:9px}.document.handwritten p{font-size:19px;line-height:1.78}.pack-label{font-size:9px;line-height:1.7}}
+
+/* Natural parchment: preserve the scanned page proportions and text boundaries. */
+.document{
+  width:min(100%,620px);
+  max-width:620px;
+  min-height:850px;
+  margin:0 auto;
+  padding:clamp(86px,11vw,110px) clamp(59px,9vw,88px) clamp(88px,10vw,110px);
+  border:0;
+  border-radius:0;
+  clip-path:none;
+  background:transparent url("assets/aged_paper.svg") center center / 100% 100% no-repeat;
+  box-shadow:none;
+  filter:drop-shadow(0 16px 25px #0009);
+  overflow-wrap:anywhere;
+}
+.document::before{display:none}
+.document > *{position:relative;max-width:100%}
+.document p{font-size:clamp(15px,1.75vw,17px);line-height:1.92;margin:0 0 18px}
+.document h2{font-size:clamp(24px,3vw,30px);line-height:1.4;margin:0 0 27px;overflow-wrap:anywhere}
+.document blockquote{margin:25px 0;padding-left:15px;font-size:clamp(15px,1.75vw,17px);line-height:1.9}
+.document footer{margin-top:27px;padding-top:17px;line-height:1.65}
+.document.handwritten p{font-size:clamp(18px,2.1vw,21px);line-height:1.76}
+.document.handwritten h2{font-size:clamp(27px,3.4vw,33px)}
+.document.handwritten blockquote{font-size:clamp(19px,2.2vw,23px);line-height:1.7}
+html[lang="en"] .document.handwritten p{font-size:clamp(23px,2.7vw,27px);line-height:1.43}
+html[lang="en"] .document.handwritten h2{font-size:clamp(33px,4vw,40px)}
+html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
+@media(max-width:600px){
+ .stage{width:min(100% - 14px,920px)}
+ .document{
+   width:min(100%,500px);
+   min-height:0;
+   padding:clamp(55px,12vw,78px) clamp(39px,10vw,64px) clamp(70px,14vw,95px);
+ }
+ .document p{font-size:clamp(14px,3.7vw,16px);line-height:1.82;margin-bottom:14px}
+ .document h2{font-size:clamp(22px,6vw,27px);margin-bottom:20px}
+ .document blockquote{font-size:clamp(14px,3.7vw,16px)}
+ .document.handwritten p{font-size:clamp(17px,4.6vw,20px);line-height:1.62}
+ .document.handwritten h2{font-size:clamp(25px,6.7vw,31px)}
+ html[lang="en"] .document.handwritten p{font-size:clamp(23px,6vw,28px);line-height:1.33}
+}
+@media(max-width:375px){
+ .document{padding-left:34px;padding-right:34px}
+ .document .kicker{font-size:8px;letter-spacing:.05em}
+}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
