@@ -62,11 +62,12 @@ button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible
 .foot{font:12px/1.8 Georgia,serif;color:#a79986;text-align:center;margin-top:70px}
 @media(max-width:600px){.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chapter{min-height:130px;padding:16px 8px}.metadata{gap:8px}.document{padding:30px 25px}.topbar{font-size:9px;letter-spacing:.13em;padding:22px 20px}.scene{min-height:320px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scene,.chapter{transition:none!important}}
+.topbar .lang-links{display:flex;gap:10px}.lang-links a{opacity:.55}.lang-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
 </style>
 </head>
 <body>
 <div class="frame"></div>
-<header class="topbar"><span>B A B E L &nbsp; / &nbsp; CENTRAL ARCHIVE</span><a href="index.html" aria-label="返回首頁">RETURN TO TITLE</a></header>
+<header class="topbar"><span>B A B E L &nbsp; / &nbsp; CENTRAL ARCHIVE</span><span class="lang-links"><a href="archive.html" aria-current="page">中</a><a href="archive_en.html">EN</a><a class="return-home" href="index.html" aria-label="返回首頁">RETURN TO TITLE</a></span></header>
 <main class="stage">
 <div id="scene" class="scene" aria-live="polite"></div>
 <div id="nav" class="nav"><button id="prev" class="action secondary" hidden>BACK / 上一頁</button><button id="next" class="action">CONTINUE / 繼續</button></div>
@@ -163,6 +164,8 @@ function render(i,immediate=false){
 }
 next.onclick=()=>render(current+1);prev.onclick=()=>render(current-1);
 document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'&&!next.hidden)next.click();if(e.key==='ArrowLeft'&&!prev.hidden)prev.click()});
+document.querySelectorAll('.return-home').forEach(a=>a.addEventListener('click',e=>{if(window.parent!==window){e.preventDefault();window.parent.postMessage({type:'babel-return-title'},location.origin)}}));
+document.querySelectorAll('.lang-links a:not(.return-home)').forEach(a=>a.addEventListener('click',()=>{try{localStorage.setItem('babel_lang',a.textContent.trim()==='EN'?'en':'zh')}catch(e){}}));
 render(0,true);
 })();
 </script>
