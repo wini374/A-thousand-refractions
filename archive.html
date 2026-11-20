@@ -63,12 +63,40 @@ button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible
 @media(max-width:600px){.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chapter{min-height:130px;padding:16px 8px}.metadata{gap:8px}.document{padding:30px 25px}.topbar{font-size:9px;letter-spacing:.13em;padding:22px 20px}.scene{min-height:320px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scene,.chapter{transition:none!important}}
 .topbar .lang-links{display:flex;gap:10px}.lang-links a{opacity:.55}.lang-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
+
+/* Two archival packets and scanned parchment. */
+.pack-label{max-width:820px;margin:0 auto 20px;text-align:center;color:#c9af83;font:11px/1.9 Georgia,serif;letter-spacing:.13em}
+.pack-label strong{font-weight:normal;color:#e5d0a8}
+.document{max-width:730px;min-height:560px;padding:clamp(46px,8vw,77px) clamp(35px,8vw,84px);
+  clip-path:none; border:0; border-radius:0; color:#392d1e;
+  background:#d1b184 url("assets/aged_paper.svg") center center / 100% 100% no-repeat;
+  box-shadow:none;filter:drop-shadow(0 14px 30px #0009)}
+.document:before{inset:7% 9%;opacity:.23;background:linear-gradient(100deg,#e4d0a5aa,#f4e8c8aa 43%,#e2cda6aa);border-radius:30%;mix-blend-mode:screen}
+.document .kicker{color:#76532d;font-size:10px;letter-spacing:.1em}
+.document h2{color:#422d1b;text-shadow:0 1px #f1e0c555}
+.document p,.document blockquote{color:#392918}
+.document footer{color:#5f462c}
+.document.handwritten{font-family:"Ma Shan Zheng","DFKai-SB","KaiTi","STKaiti",cursive}
+.document.handwritten h2{font-family:"Ma Shan Zheng","DFKai-SB","KaiTi","STKaiti",cursive;font-size:clamp(28px,4.5vw,39px);letter-spacing:.03em}
+.document.handwritten p{font-size:clamp(19px,2.4vw,23px);line-height:1.95;letter-spacing:.025em}
+.document.handwritten blockquote{font-size:clamp(20px,2.6vw,25px);font-weight:normal}
+.document.handwritten footer{font-family:Georgia,"Noto Serif TC",serif;font-size:11px}
+html[lang="en"] .document.handwritten{font-family:"Caveat",cursive}
+html[lang="en"] .document.handwritten h2{font-family:"Caveat",cursive;font-size:clamp(32px,5vw,48px)}
+html[lang="en"] .document.handwritten p{font-size:clamp(24px,3.2vw,30px);line-height:1.48}
+html[lang="en"] .document.handwritten blockquote{font-size:clamp(25px,3.6vw,34px)}
+.private-opening:before{content:"RESTRICTED DOCUMENT PACKET / PERSONAL ACCESS";display:block;font:10px Georgia,serif;letter-spacing:.12em;color:#c9ab83;border-bottom:1px solid #9e805655;margin-bottom:24px;padding-bottom:16px}
+@media(max-width:600px){.document{padding:38px 28px;min-height:480px}.document .kicker{font-size:9px}.document.handwritten p{font-size:19px;line-height:1.78}.pack-label{font-size:9px;line-height:1.7}}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="frame"></div>
 <header class="topbar"><span>B A B E L &nbsp; / &nbsp; CENTRAL ARCHIVE</span><span class="lang-links"><a href="archive.html" aria-current="page">中</a><a href="archive_en.html">EN</a><a class="return-home" href="index.html" aria-label="返回首頁">RETURN TO TITLE</a></span></header>
 <main class="stage">
+<div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
 <div id="nav" class="nav"><button id="prev" class="action secondary" hidden>BACK / 上一頁</button><button id="next" class="action">CONTINUE / 繼續</button></div>
 <div id="progress" class="progress" aria-label="閱讀進度"></div>
@@ -78,7 +106,15 @@ button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible
 (()=>{
 'use strict';
 const scenes=[
-`<article class="document">
+`<article class="terminal public-opening">
+<p class="kicker">BABEL / ARCHIVAL SYSTEM</p><p class="code">SYSTEM INITIALIZED<br>ARCHIVE STATUS: ONLINE</p><div class="rule"></div><h2>BABEL 的原則</h2>
+<p>歡迎使用 BABEL 中央歷史檔案系統。</p>
+<p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
+<div class="rules"><article><div class="code">PRINCIPLE 01 / PRESERVATION</div><p>保存紀錄，不代表認可其內容。</p></article>
+<article><div class="code">PRINCIPLE 02 / TRANSLATION</div><p>翻譯與轉錄可能造成資訊損失。</p></article>
+<article><div class="code">PRINCIPLE 03 / INTERPRETATION</div><p>不同來源的紀錄，可能對相同事件提出相互矛盾的描述。</p></article></div>
+<p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p></article>`,
+`<article class="document printed">
 <p class="kicker">RECOVERED DOCUMENT / 001</p><h2>致每一位踏入 BABEL 的人</h2>
 <p>我不知道你是為了什麼來到這裡。</p>
 <p>或許，你希望尋找某個早已被遺忘的名字；又或許，你只是想知道，數百年前的人們究竟過著怎樣的生活。</p>
@@ -87,15 +123,7 @@ const scenes=[
 <p>我們盡可能地保存它們。不論內容是否真實，不論書寫者的身分，也不論它是否符合後世對歷史的想像。</p>
 <blockquote>即使一份紀錄是錯誤的，它依然能告訴我們，曾經有人如此理解這個世界。</blockquote>
 <footer>—— 摘自《BABEL 訪客導覽手記》，作者未署名</footer></article>`,
-`<article class="terminal">
-<p class="kicker">BABEL / ARCHIVAL SYSTEM</p><p class="code">SYSTEM INITIALIZED<br>ARCHIVE STATUS: ONLINE</p><div class="rule"></div><h2>BABEL 的原則</h2>
-<p>歡迎使用 BABEL 中央歷史檔案系統。</p>
-<p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
-<div class="rules"><article><div class="code">PRINCIPLE 01 / PRESERVATION</div><p>保存紀錄，不代表認可其內容。</p></article>
-<article><div class="code">PRINCIPLE 02 / TRANSLATION</div><p>翻譯與轉錄可能造成資訊損失。</p></article>
-<article><div class="code">PRINCIPLE 03 / INTERPRETATION</div><p>不同來源的紀錄，可能對相同事件提出相互矛盾的描述。</p></article></div>
-<p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p></article>`,
-`<article class="document">
+`<article class="document handwritten">
 <p class="kicker">HANDWRITTEN ANNOTATION / UNDATED</p><h2>留在頁邊的文字</h2>
 <p>我曾經以為，只要蒐集足夠多的證據，我們終究能夠還原過去。</p>
 <p>後來才發現，事情遠沒有那麼簡單。</p>
@@ -104,7 +132,7 @@ const scenes=[
 <p>所以，如果你在這裡讀到了彼此矛盾的文字，請不要急著刪去其中一份。</p>
 <p>或許它們都不完整。也或許，你只是還沒有找到那片缺失的碎片。</p>
 <footer>—— 無署名手寫註記</footer></article>`,
-`<article class="terminal">
+`<article class="terminal private-opening">
 <p class="kicker">BABEL / ACCESS CONTROL</p><p class="code">ACCESS REQUEST DETECTED<br>IDENTITY VERIFICATION IN PROGRESS...<br>VERIFICATION COMPLETE</p><div class="rule"></div><h2>歡迎進入 BABEL，研究員。</h2>
 <div class="info"><dl class="metadata"><dt>IDENTITY</dt><dd>ARCHIVAL RESEARCHER</dd><dt>CLEARANCE</dt><dd>AUTHORIZED</dd><dt>ASSIGNMENT</dt><dd>PENDING</dd></dl></div>
 <p>身分驗證完成。</p>
@@ -122,7 +150,7 @@ const scenes=[
 <p>前次研究已結束，但該人物的身分分類仍未得到確認。前任研究員的最終判定暫不公開，以避免影響本次獨立評估。</p>
 <p>你的任務是重新檢視六組檔案，整理其來源、差異與可能的關聯。</p>
 <p class="code">RESEARCH ACCESS GRANTED</p></article>`,
-`<article class="document">
+`<article class="document handwritten">
 <p class="kicker">ATTACHED NOTE / PREVIOUS RESEARCH SESSION</p><h2>給下一位研究員</h2>
 <p>如果你正在閱讀這段文字，那麼這份研究大概又被重新開啟了。</p>
 <p>我不知道你會在這些紀錄中看見什麼，也不知道當你讀完所有文獻後，會得出怎樣的結論。</p>
@@ -152,6 +180,9 @@ function render(i,immediate=false){
  current=Math.max(0,Math.min(scenes.length-1,i));
  const swap=()=>{
  scene.innerHTML=scenes[current];
+ const isPublic=current<3;
+ const packet=document.getElementById('pack-label');
+ packet.innerHTML=isPublic?'PUBLIC DOCUMENT / BABEL GENERAL ORIENTATION　·　公共導覽文件 <strong>'+('0'+(current+1)).slice(-2)+' / 03</strong>':'RESEARCH PACKET / PRIVATE ASSIGNMENT　·　個人研究文件包 <strong>'+('0'+(current-2)).slice(-2)+' / 04</strong>';
  prev.hidden=current===0;next.hidden=current===scenes.length-1;
  next.textContent=current===scenes.length-2?'ACCESS RECORDS / 開啟檔案':'CONTINUE / 繼續';
  prog.innerHTML=scenes.map((_,n)=>'<span class="'+(n<=current?'active':'')+'"></span>').join('');
