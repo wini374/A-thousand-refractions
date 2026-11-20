@@ -153,7 +153,7 @@ function render(i,immediate=false){
  next.textContent=current===scenes.length-2?'ACCESS RECORDS':'CONTINUE';
  prog.innerHTML=scenes.map((_,n)=>'<span class="'+(n<=current?'active':'')+'"></span>').join('');
  const chapters=scene.querySelectorAll('.chapter');
- chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='「'+b.textContent.trim().replace(/\s+/g,' ')+'」尚未開放。正式章節完成後，將連結至 '+b.dataset.file+'。'}));
+ chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='This chapter is not yet available. Future page: '+b.dataset.file+'.';
  window.scrollTo({top:0,behavior:'instant'});scene.classList.add('visible');locked=false;
  };
  if(immediate){swap();return}
