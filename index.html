@@ -234,7 +234,7 @@ async function startWithMusic(){
 $('start').onclick=startWithMusic;
 $('skip').onclick=showTitle;
 $('replay').onclick=()=>{if(!music.paused){music.currentTime=0;}begin()};
-$('enter').onclick=()=>{cancelSequence();hide('title');$('stage').classList.remove('title-view');mode='prologue';$('replay').hidden=true;show('prologue')};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
+$('enter').onclick=()=>{cancelSequence();$('enter').disabled=true;document.body.style.transition='opacity .65s ease';document.body.style.opacity='0';setTimeout(()=>{window.location.href='archive.html'},650)};$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
 raf=requestAnimationFrame(draw);
 })();
 </script>
