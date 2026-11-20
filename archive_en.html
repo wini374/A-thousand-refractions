@@ -228,10 +228,13 @@ function render(i,immediate=false){
  const packet=document.getElementById('pack-label');
  packet.innerHTML=isPublic?'PUBLIC DOCUMENT / BABEL GENERAL ORIENTATION <strong>'+('0'+(current+1)).slice(-2)+' / 03</strong>':'RESEARCH PACKET / PRIVATE ASSIGNMENT <strong>'+('0'+(current-2)).slice(-2)+' / 04</strong>';
  prev.hidden=current===0;next.hidden=current===scenes.length-1;
- next.textContent=current===scenes.length-2?'ACCESS RECORDS':'CONTINUE';
- prog.innerHTML=scenes.map((_,n)=>'<span class="'+(n<=current?'active':'')+'"></span>').join('');
+ next.textContent=current===2?'OPEN RESEARCH PACKET':current===scenes.length-2?'ACCESS RECORDS':'CONTINUE';
+ const packetLength=isPublic?3:4;
+ const packetPosition=isPublic?current:current-3;
+ prog.innerHTML=Array.from({length:packetLength},(_,n)=>'<span class="'+(n<=packetPosition?'active':'')+'"></span>').join('');
+ prog.setAttribute('aria-label',(isPublic?'Public documents':'Private research packet')+' '+(packetPosition+1)+' / '+packetLength);
  const chapters=scene.querySelectorAll('.chapter');
- chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='This chapter is not yet available. Future page: '+b.dataset.file+'.';
+ chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='This chapter is not yet available. Future page: '+b.dataset.file+'.';}));
  window.scrollTo({top:0,behavior:'instant'});scene.classList.add('visible');locked=false;
  };
  if(immediate){swap();return}
