@@ -67,15 +67,15 @@ body.archive-open #stage,body.archive-open #lang-switch{visibility:hidden}
 <div class="shade"></div><div class="frame"></div>
 <div class="brand">B A B E L &nbsp; / &nbsp; A R C H I V E</div>
 <div id="lang-switch" class="lang-switch" role="group" aria-label="Language / 語言"><button id="choose-zh" type="button" aria-pressed="true">中文</button><span> / </span><button id="choose-en" type="button" aria-pressed="false">EN</button></div>
-<section id="gate"><p class="small" id="gate-label">人類文明檔案館</p><div class="rule"></div><button id="start">開始</button><p class="hint" id="gate-hint">點擊開始，開啟一段被遺忘的歷史。</p></section>
+<section id="gate"><p class="small" id="gate-label">人類文明檔案館</p><div class="rule"></div><button id="start">開始</button><p class="hint" id="gate-hint">點擊開始，開啟一段被遺忘的歷史</p></section>
 <section id="title" class="invisible" hidden>
 <div class="title-stack">
 <h1 id="main-heading"><span class="reveal" style="--delay:0s">千重折光</span></h1>
 
-<p id="title-quote" class="subtitle-en reveal" style="--delay:1.4s">每段人生都會留下紀錄。<br>每份紀錄，都會留下不同的詮釋。</p>
+<p id="title-quote" class="subtitle-en reveal" style="--delay:1.4s">每段人生都會留下紀錄<br>每份紀錄，都會留下不同的詮釋</p>
 <button id="enter" class="reveal" style="--delay:2.7s" disabled>開啟檔案館</button>
 </div></section>
-<section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號，<br>卻未能留下他自己的名字。</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
+<section id="prologue" class="invisible" hidden><p class="note">BABEL / PROLOGUE</p><div class="rule"></div><p lang="en">History gave him a thousand names,<br>yet could not preserve his own.</p><p>歷史賦予了他千種名號<br>卻未能留下他自己的名字</p><div class="rule"></div><p class="note">SUBJECT 000 &nbsp; / &nbsp; ■ ■ ■</p><p class="hint">序章尚待開放 · Prologue in development</p><button id="back">RETURN / 返回</button></section>
 <div class="controls"><button id="skip" hidden>SKIP / 跳過</button><button id="replay" hidden>REPLAY / 重播</button><button id="sound" hidden aria-pressed="false">SOUND OFF</button></div>
 </main>
 <div id="archive-layer" hidden aria-label="BABEL Archive"><iframe id="archive-frame" title="BABEL Central Archive"></iframe></div>
@@ -235,7 +235,7 @@ music.addEventListener('play',()=>{soundOn=true;updateSound()});
 music.addEventListener('pause',()=>{soundOn=false;updateSound()});
 music.addEventListener('error',()=>{soundOn=false;updateSound()});
 function updateSound(){$('sound').textContent=(typeof STRINGS!=='undefined'&&STRINGS[lang]?STRINGS[lang][soundOn?'on':'off']:(soundOn?'SOUND ON':'SOUND OFF'));$('sound').setAttribute('aria-pressed',String(soundOn))}
-if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史。'}
+if(MUSIC_PATH){music.src=MUSIC_PATH;$('sound').hidden=false}else{document.querySelector('#gate .hint').textContent='點擊開始，開啟一段被遺忘的歷史'}
 async function startWithMusic(){
  if(starting)return;
  starting=true;$('start').disabled=true;
@@ -248,8 +248,8 @@ $('start').onclick=startWithMusic;
 $('skip').onclick=showTitle;
 $('replay').onclick=()=>{if(!music.paused){music.currentTime=0;}begin()};
 const STRINGS={
- zh:{gate:'人類文明檔案館',start:'開始',hint:'點擊開始，開啟一段被遺忘的歷史。',title:['千重折光'],quote:'每段人生都會留下紀錄。<br>每份紀錄，都會留下不同的詮釋。',enter:'開啟檔案館',back:'返回',skip:'跳過',replay:'重播',on:'音樂開',off:'音樂關'},
- en:{gate:'AN ARCHIVE OF HUMANITY',start:'BEGIN',hint:'Click to begin a journey through forgotten history.',title:['A THOUSAND','REFRACTIONS'],quote:'Every life leaves a record.<br>Every record leaves an interpretation.',enter:'OPEN THE ARCHIVE',back:'RETURN',skip:'SKIP',replay:'REPLAY',on:'SOUND ON',off:'SOUND OFF'}
+ zh:{gate:'人類文明檔案館',start:'開始',hint:'點擊開始，開啟一段被遺忘的歷史',title:['千重折光'],quote:'每段人生都會留下紀錄<br>每份紀錄，都會留下不同的詮釋',enter:'開啟檔案館',back:'返回',skip:'跳過',replay:'重播',on:'音樂開',off:'音樂關'},
+ en:{gate:'AN ARCHIVE OF HUMANITY',start:'BEGIN',hint:'Click to begin a journey through forgotten history',title:['A THOUSAND','REFRACTIONS'],quote:'Every life leaves a record<br>Every record leaves an interpretation',enter:'OPEN THE ARCHIVE',back:'RETURN',skip:'SKIP',replay:'REPLAY',on:'SOUND ON',off:'SOUND OFF'}
 };
 let lang='zh';
 try{lang=localStorage.getItem('babel_lang')==='en'?'en':'zh'}catch(e){}
