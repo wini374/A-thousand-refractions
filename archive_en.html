@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0e">
+<meta name="description" content="BABEL — A Thousand Refractions. Enter the archive.">
+<title>BABEL — A Thousand Refractions (English)</title>
+<style>
+:root{color-scheme:dark;--ink:#e7dcc8;--gold:#c0a77d;--muted:#a79a89;--line:#66543e;--bg:#0b0b0e}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;min-height:100dvh;color:var(--ink);background:var(--bg);font-family:Georgia,"Times New Roman",serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 65% 55% at 50% 38%,#28201670,transparent),repeating-linear-gradient(90deg,transparent 0 67px,#ffffff04 68px 69px);z-index:-1}
+button,a{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:2px solid #e4cc98;outline-offset:4px}
+.frame{position:fixed;inset:clamp(10px,2.8vw,30px);border:1px solid #bba47b35;pointer-events:none;z-index:5}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:21px clamp(24px,5vw,72px);font:10px Georgia,serif;letter-spacing:.22em;color:var(--gold);position:relative;z-index:3}
+.topbar a{color:var(--gold);text-decoration:none}
+.stage{width:min(920px,calc(100% - 36px));margin:clamp(10px,4vh,55px) auto 80px}
+.kicker{letter-spacing:.21em;font:11px Georgia,serif;color:var(--gold);margin:0 0 18px}
+.scene{opacity:0;transform:translateY(18px);transition:opacity 850ms ease,transform 850ms ease;min-height:360px}
+.scene.visible{opacity:1;transform:none}
+.document{position:relative;margin:auto;max-width:790px;padding:clamp(32px,6vw,68px);color:#34291c;clip-path:polygon(1% 0%,99% .2%,100% 99%,1% 100%,0% 98%,.2% 2%);background:linear-gradient(115deg,#c4a677,#dfcba5 24%,#cbb18a 58%,#a98659 100%);box-shadow:0 15px 58px #0009}
+.document:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.45;background:repeating-linear-gradient(0deg,#654d2518 0 1px,transparent 1px 5px),radial-gradient(circle at 80% 10%,#73503344,transparent 40%),radial-gradient(circle at 15% 85%,#75503733,transparent 32%)}
+.document>*{position:relative}
+.document .kicker{color:#765a35}
+.document h2{font-size:clamp(23px,3.3vw,35px);font-weight:normal;margin:0 0 28px}
+.document p{font-size:clamp(15px,2vw,18px);line-height:2.13;margin:0 0 15px}
+.document blockquote{margin:25px 0;font-weight:bold;border-left:2px solid #765a35;padding-left:20px}
+.document footer{border-top:1px solid #78624260;margin-top:35px;padding-top:20px;font-size:12px;line-height:1.8;color:#655137}
+.terminal{max-width:820px;margin:auto;border:1px solid #bca37a53;background:linear-gradient(135deg,#101318,#0b0d12);padding:clamp(24px,5vw,54px);box-shadow:0 20px 75px #0007}
+.terminal .rule{height:1px;background:#8a765444;margin:20px 0 27px}
+.terminal h2{font-size:clamp(24px,4vw,34px);font-weight:normal;margin:0 0 22px}
+.terminal p{font-size:clamp(15px,2vw,18px);line-height:2.05;margin:0 0 17px}
+.code{font:12px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace;color:#c4ae88}
+.terminal strong{font-weight:600;color:#f1e7d7}
+.rules,.info{border:1px solid #77684e6b;padding:clamp(17px,3vw,25px);margin:28px 0}
+.rules article{padding:12px 0}
+.rules article+article{border-top:1px solid #66574177}
+.rules p,.info p{margin:5px 0}
+.metadata{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px}
+.metadata dt{color:#a5a098}.metadata dd{margin:0;text-align:right;color:#e7dcc8}
+.subject{font-size:clamp(36px,7vw,65px);letter-spacing:.28em;text-align:center;margin:35px 0;color:#e1d1b4}
+.transition{max-width:650px;margin:0 auto;text-align:center;padding:50px 8px}
+.transition p{line-height:2.3;font-size:clamp(16px,2.2vw,21px)}
+.transition .accent{color:var(--gold)}
+.nav{margin:32px auto 0;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.action{min-height:48px;max-width:100%;border:1px solid #bfa67890;color:#e4c9a0;background:#1c1814ee;padding:14px 25px;letter-spacing:.08em;transition:background .25s,color .25s}
+.action:hover{background:#bfa678;color:#15110d}
+.action.secondary{background:transparent;border-color:#766751;color:#bfae92}
+.progress{display:flex;justify-content:center;gap:7px;margin:35px 0 0}
+.progress span{width:21px;height:2px;background:#5d5548}
+.progress span.active{background:#d9bd8b}
+.index{max-width:850px;margin:0 auto;text-align:center}
+.index h2{font-size:clamp(24px,4vw,38px);font-weight:normal;margin:0 0 10px}
+.chapter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:38px 0}
+.chapter{background:linear-gradient(145deg,#1a1918,#111216);border:1px solid #8270566a;min-height:155px;padding:25px 12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#d6c7af;transition:transform .25s,border-color .25s,background .25s}
+.chapter:hover{transform:translateY(-3px);border-color:#bfa678}
+.chapter .number{font:clamp(30px,4vw,41px) Georgia,serif;color:#ccb38b}
+.chapter .state{font:10px Georgia,serif;letter-spacing:.12em;color:#968671}
+.notice{min-height:26px;font-size:13px;color:#d8bc8f}
+.foot{font:12px/1.8 Georgia,serif;color:#a79986;text-align:center;margin-top:70px}
+@media(max-width:600px){.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chapter{min-height:130px;padding:16px 8px}.metadata{gap:8px}.document{padding:30px 25px}.topbar{font-size:9px;letter-spacing:.13em;padding:22px 20px}.scene{min-height:320px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scene,.chapter{transition:none!important}}
+.topbar .lang-links{display:flex;gap:10px}.lang-links a{opacity:.55}.lang-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<header class="topbar"><span>B A B E L &nbsp; / &nbsp; CENTRAL ARCHIVE</span><span class="lang-links"><a href="archive.html">中</a><a href="archive_en.html" aria-current="page">EN</a><a class="return-home" href="index.html" aria-label="Return to title">RETURN TO TITLE</a></span></header>
+<main class="stage">
+<div id="scene" class="scene" aria-live="polite"></div>
+<div id="nav" class="nav"><button id="prev" class="action secondary" hidden>BACK / 上一頁</button><button id="next" class="action">CONTINUE / 繼續</button></div>
+<div id="progress" class="progress" aria-label="閱讀進度"></div>
+<footer class="foot">BABEL ARCHIVAL SYSTEM · PRESERVATION DOES NOT GUARANTEE TRUTH</footer>
+</main>
+<script>
+(()=>{
+'use strict';
+const scenes=[
+`<article class="document">
+<p class="kicker">RECOVERED DOCUMENT / 001</p><h2>To Everyone Who Enters BABEL</h2>
+<p>I do not know what brought you here.</p>
+<p>Perhaps you are searching for a name long forgotten, or perhaps you simply want to know how people lived centuries ago.</p>
+<p>Whatever your reason, welcome to BABEL.</p>
+<p>Here lie countless records left behind by humanity—from the first words carved in stone to letters that were never delivered.</p>
+<p>We preserve what we can, regardless of whether it is true, who wrote it, or how it fits with what later generations call history.</p>
+<blockquote>Even an erroneous record tells us that someone once understood the world in this way.</blockquote>
+<footer>— From A Visitor's Guide to BABEL, unsigned</footer></article>`,
+`<article class="terminal">
+<p class="kicker">BABEL / ARCHIVAL SYSTEM</p><p class="code">SYSTEM INITIALIZED<br>ARCHIVE STATUS: ONLINE</p><div class="rule"></div><h2>The Principles of BABEL</h2>
+<p>Welcome to the BABEL Central Historical Archive.</p>
+<p>Our primary functions are record preservation, transcription, translation, and cross-referencing historical sources.</p>
+<div class="rules"><article><div class="code">PRINCIPLE 01 / PRESERVATION</div><p>Preserving a record does not constitute an endorsement of its contents.</p></article>
+<article><div class="code">PRINCIPLE 02 / TRANSLATION</div><p>Translation and transcription may result in the loss of information.</p></article>
+<article><div class="code">PRINCIPLE 03 / INTERPRETATION</div><p>Independent records may offer contradictory accounts of the same event.</p></article></div>
+<p><strong>BABEL does not determine the sole interpretation of history.</strong></p></article>`,
+`<article class="document">
+<p class="kicker">HANDWRITTEN ANNOTATION / UNDATED</p><h2>A Note in the Margin</h2>
+<p>I once believed that, given enough evidence, we could eventually reconstruct the past.</p>
+<p>In time, I learned it was not nearly so simple.</p>
+<p>The same words can carry entirely different meanings in different languages. The same person can exist in utterly opposing forms within different people's memories.</p>
+<p>We try to piece those fragments together, yet somehow our own interpretations find their way into the gaps.</p>
+<p>If you encounter conflicting accounts here, do not rush to discard one of them.</p>
+<p>Perhaps neither is complete. Or perhaps you have not yet found the missing fragment.</p>
+<footer>— Unsigned handwritten annotation</footer></article>`,
+`<article class="terminal">
+<p class="kicker">BABEL / ACCESS CONTROL</p><p class="code">ACCESS REQUEST DETECTED<br>IDENTITY VERIFICATION IN PROGRESS...<br>VERIFICATION COMPLETE</p><div class="rule"></div><h2>Welcome to BABEL, Researcher.</h2>
+<div class="info"><dl class="metadata"><dt>IDENTITY</dt><dd>ARCHIVAL RESEARCHER</dd><dt>CLEARANCE</dt><dd>AUTHORIZED</dd><dt>ASSIGNMENT</dt><dd>PENDING</dd></dl></div>
+<p>Identity verified.</p>
+<p>Your access privileges allow you to retrieve, compare, and annotate historical records awaiting final cataloguing.</p>
+<p>Your findings will inform the subsequent review of the assigned archive.</p></article>`,
+`<article class="terminal">
+<p class="kicker">NEW ASSIGNMENT RECEIVED</p><h2>An Unfinished Historical Index</h2><div class="rule"></div>
+<p>A pending research file has been assigned to you.</p>
+<p>It concerns an individual who lived approximately two hundred years ago. The associated records span several languages, regions, and periods.</p>
+<p>Due to discrepancies between sources, the archive has not received a definitive classification.</p>
+<div class="info"><div class="code">SUBJECT / 000</div><div class="subject">■ ■ ■</div><dl class="metadata">
+<dt>Period</dt><dd>Approx. 200 years ago</dd><dt>Original name</dt><dd>Illegible</dd><dt>Record groups</dt><dd>6</dd><dt>Previous research</dt><dd>COMPLETED</dd><dt>Identity classification</dt><dd>UNRESOLVED</dd>
+<dt>Archive status</dt><dd>PENDING REVIEW</dd></dl></div>
+<p>The previous investigation was completed, but the subject's classification remains unresolved. The former researcher's final assessment has been sealed to protect the independence of your review.</p>
+<p>Your task is to examine six groups of records and analyze their origins, discrepancies, and possible connections.</p>
+<p class="code">RESEARCH ACCESS GRANTED</p></article>`,
+`<article class="document">
+<p class="kicker">ATTACHED NOTE / PREVIOUS RESEARCH SESSION</p><h2>To the Next Researcher</h2>
+<p>If you are reading this, I suppose the investigation has been reopened.</p>
+<p>I cannot know what you will find in these records—or what conclusion you will reach once you have read them all.</p>
+<p>But there is one thing I hope you remember.</p>
+<p>What you are about to read is the man as countless others saw him.</p>
+<p>These accounts may carry admiration, anger, fear, longing, or prejudices their authors never recognized in themselves.</p>
+<p>Each deserves to be heard. Yet none should be mistaken for the whole of him.</p>
+<blockquote>Do not let any single record replace the life he actually lived.</blockquote>
+<footer>ANNOTATION STATUS: ARCHIVED<br>PREVIOUS ASSESSMENT: SEALED</footer></article>`,
+`<section class="index"><p class="kicker">BABEL / SUBJECT 000</p><h2>Archive Index Unlocked</h2>
+<p class="code">6 ARCHIVE GROUPS / PENDING RECONSTRUCTION</p>
+<div class="transition"><p>Two hundred years ago, he lived in this world.</p><p>Two hundred years later, people are still telling his story.</p><p class="accent">Now, it is your turn to read.</p></div>
+<div class="chapter-grid">
+<button class="chapter" data-file="chapter_1.html" type="button"><span class="number">I</span><span>CHAPTER I</span><span class="state">NOT YET AVAILABLE</span></button>
+<button class="chapter" data-file="chapter_2.html" type="button"><span class="number">II</span><span>CHAPTER II</span><span class="state">NOT YET AVAILABLE</span></button>
+<button class="chapter" data-file="chapter_3.html" type="button"><span class="number">III</span><span>CHAPTER III</span><span class="state">NOT YET AVAILABLE</span></button>
+<button class="chapter" data-file="chapter_4.html" type="button"><span class="number">IV</span><span>CHAPTER IV</span><span class="state">NOT YET AVAILABLE</span></button>
+<button class="chapter" data-file="chapter_5.html" type="button"><span class="number">V</span><span>CHAPTER V</span><span class="state">NOT YET AVAILABLE</span></button>
+<button class="chapter" data-file="chapter_6.html" type="button"><span class="number">VI</span><span>CHAPTER VI</span><span class="state">NOT YET AVAILABLE</span></button>
+</div><p id="chapter-notice" class="notice" aria-live="polite"></p><p class="code">PRESERVATION DOES NOT GUARANTEE TRUTH</p></section>`
+];
+const scene=document.getElementById('scene'),prev=document.getElementById('prev'),next=document.getElementById('next'),prog=document.getElementById('progress');
+let current=0,locked=false;
+function render(i,immediate=false){
+ current=Math.max(0,Math.min(scenes.length-1,i));
+ const swap=()=>{
+ scene.innerHTML=scenes[current];
+ prev.hidden=current===0;next.hidden=current===scenes.length-1;
+ next.textContent=current===scenes.length-2?'ACCESS RECORDS':'CONTINUE';
+ prog.innerHTML=scenes.map((_,n)=>'<span class="'+(n<=current?'active':'')+'"></span>').join('');
+ const chapters=scene.querySelectorAll('.chapter');
+ chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='「'+b.textContent.trim().replace(/\s+/g,' ')+'」尚未開放。正式章節完成後，將連結至 '+b.dataset.file+'。'}));
+ window.scrollTo({top:0,behavior:'instant'});scene.classList.add('visible');locked=false;
+ };
+ if(immediate){swap();return}
+ if(locked)return;locked=true;scene.classList.remove('visible');setTimeout(swap,260);
+}
+next.onclick=()=>render(current+1);prev.onclick=()=>render(current-1);
+document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'&&!next.hidden)next.click();if(e.key==='ArrowLeft'&&!prev.hidden)prev.click()});
+document.querySelectorAll('.return-home').forEach(a=>a.addEventListener('click',e=>{if(window.parent!==window){e.preventDefault();window.parent.postMessage({type:'babel-return-title'},location.origin)}}));
+document.querySelectorAll('.lang-links a:not(.return-home)').forEach(a=>a.addEventListener('click',()=>{try{localStorage.setItem('babel_lang',a.textContent.trim()==='EN'?'en':'zh')}catch(e){}}));
+render(0,true);
+})();
+</script>
+</body>
+</html>
