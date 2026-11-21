@@ -226,6 +226,27 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(22px,2.7vw,25px
 @keyframes auth-pulse{50%{opacity:.5;transform:scale(.94)}}
 @media(prefers-reduced-motion:reduce){.auth-icon{animation:none}.auth-fill{transition:none}}
 
+
+/* A distinct startup screen appears before any archival document. */
+.boot-overlay{width:min(100%,820px);min-height:min(65vh,550px);margin:0 auto;display:grid;place-items:center}
+.boot-overlay[hidden]{display:none!important}
+.boot-panel{overflow:hidden}
+.boot-emblem{height:110px;display:grid;place-items:center;color:#c9ab79;font-size:70px;text-shadow:0 0 26px #d6bc8860;animation:auth-pulse 2.4s ease-in-out infinite}
+#nav[hidden],#progress[hidden],#scene[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.boot-emblem{animation:none}}
+/* More compact handwritten prose, fitted to the parchment. */
+.document.handwritten h2{font-size:clamp(24px,3.15vw,29px)!important;line-height:1.35!important;margin-bottom:24px!important}
+.document.handwritten p:not(.kicker){font-size:clamp(16px,1.75vw,18px)!important;line-height:1.68!important;letter-spacing:.008em!important;margin-bottom:15px!important}
+.document.handwritten blockquote{font-size:clamp(17px,1.95vw,19px)!important;line-height:1.65!important;margin:20px 0!important}
+html[lang="en"] .document.handwritten h2{font-size:clamp(26px,3.3vw,31px)!important;line-height:1.2!important}
+html[lang="en"] .document.handwritten p:not(.kicker){font-size:clamp(18px,2.1vw,20px)!important;line-height:1.35!important;letter-spacing:0!important}
+html[lang="en"] .document.handwritten blockquote{font-size:clamp(19px,2.25vw,21px)!important;line-height:1.4!important}
+@media(max-width:600px){
+ .document.handwritten h2{font-size:clamp(22px,5.8vw,27px)!important}
+ .document.handwritten p:not(.kicker){font-size:clamp(16px,4vw,18px)!important;line-height:1.58!important}
+ html[lang="en"] .document.handwritten h2{font-size:clamp(25px,6vw,29px)!important}
+ html[lang="en"] .document.handwritten p:not(.kicker){font-size:clamp(18px,4.7vw,21px)!important;line-height:1.3!important}
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -237,6 +258,18 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(22px,2.7vw,25px
 <main class="stage">
 <div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
+
+<section id="boot-overlay" class="boot-overlay" aria-label="BABEL system startup">
+  <div class="auth-panel boot-panel">
+    <div class="auth-kicker">BABEL / CENTRAL HISTORICAL ARCHIVE</div>
+    <div class="boot-emblem" aria-hidden="true">◇</div>
+    <div class="auth-heading">CONNECTING TO BABEL</div>
+    <div id="boot-step" class="auth-step" aria-live="polite">Initializing archival system...</div>
+    <div class="auth-track"><div id="boot-fill" class="auth-fill"></div></div>
+    <div class="auth-progressline"><span>CENTRAL HISTORICAL ARCHIVE</span><span id="boot-percent">0%</span></div>
+    <div class="auth-bottom">PRESERVATION DOES NOT GUARANTEE TRUTH</div>
+  </div>
+</section>
 <section id="auth-overlay" class="auth-overlay" hidden aria-label="Researcher identity verification">
   <div class="auth-panel">
     <div class="auth-kicker">BABEL / IDENTITY PROTOCOL</div>
@@ -257,16 +290,6 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(22px,2.7vw,25px
 'use strict';
 const scenes=[
 `<article class="terminal public-opening">
-  <div class="system-boot" aria-live="polite">
-    <p class="kicker">BABEL / ARCHIVAL SYSTEM</p>
-    <p class="boot-line">Initializing system...</p>
-    <p class="boot-line">Loading central historical archive...</p>
-    <p class="boot-line">System status: online.</p>
-  </div>
-
-  <div class="rule"></div>
-
-  <div class="system-body">
     <h2>The Principles of BABEL</h2>
     <p>Welcome to the BABEL Central Historical Archive.</p>
     <p>Our primary functions are record preservation, transcription, translation, and cross-referencing historical sources.</p>
@@ -287,8 +310,7 @@ const scenes=[
     </div>
 
     <p><strong>BABEL does not determine the sole interpretation of history.</strong></p>
-  </div>
-</article>`,
+  </article>`,
 `<article class="document printed">
 <p class="kicker">RECOVERED DOCUMENT / 001</p><h2>To Everyone Who Enters BABEL</h2>
 <p>I do not know what brought you here.</p>
@@ -407,7 +429,28 @@ next.onclick=()=>render(current+1);prev.onclick=()=>render(current-1);
 document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||authRunning)return;if(e.key==='ArrowRight'&&!next.hidden)next.click();if(e.key==='ArrowLeft'&&!prev.hidden)prev.click()});
 document.querySelectorAll('.return-home').forEach(a=>a.addEventListener('click',e=>{if(window.parent!==window){e.preventDefault();window.parent.postMessage({type:'babel-return-title'},location.origin)}}));
 document.querySelectorAll('.lang-links a:not(.return-home)').forEach(a=>a.addEventListener('click',()=>{try{localStorage.setItem('babel_lang',a.textContent.trim()==='EN'?'en':'zh')}catch(e){}}));
-showScene(0,true);
+
+const boot=document.getElementById('boot-overlay'),bootFill=document.getElementById('boot-fill'),bootPercent=document.getElementById('boot-percent'),bootStep=document.getElementById('boot-step');
+const bootMessages=['Initializing archival system...','Connecting to historical database...','Verifying public access...','Opening orientation documents...','System ready.'];
+function startBoot(){
+ scene.hidden=true;nav.hidden=true;prog.hidden=true;
+ boot.hidden=false;
+ const duration=reduceMotion?180:2600;
+ const started=performance.now();
+ const tick=(now)=>{
+  const pct=Math.min(100,Math.floor((now-started)/duration*100));
+  bootFill.style.width=pct+'%';bootPercent.textContent=pct+'%';
+  bootStep.textContent=bootMessages[pct<20?0:pct<48?1:pct<78?2:pct<100?3:4];
+  if(pct<100)requestAnimationFrame(tick);
+  else setTimeout(()=>{
+   boot.hidden=true;scene.hidden=false;nav.hidden=false;prog.hidden=false;
+   showScene(0,true);
+  },reduceMotion?40:450);
+ };
+ requestAnimationFrame(tick);
+}
+
+startBoot();
 })();
 </script>
 </body>
