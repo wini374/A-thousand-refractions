@@ -410,7 +410,7 @@ const scenes=[
 <button class="chapter" data-file="chapter_4.html" type="button"><span class="number">IV</span><span>第四章</span><span class="state">尚未開放</span></button>
 <button class="chapter" data-file="chapter_5.html" type="button"><span class="number">V</span><span>第五章</span><span class="state">尚未開放</span></button>
 <button class="chapter" data-file="chapter_6.html" type="button"><span class="number">VI</span><span>第六章</span><span class="state">尚未開放</span></button>
-</div>
+</div><div class="nav" style="margin:12px auto 0"><a class="action secondary" href="endings_preview.html?lang=zh" style="text-decoration:none">開發測試／直達結局</a></div><p class="notice" style="margin-top:12px">暫時測試入口，可檢查六個結局（包含 UNKNOWN），正式劇情中將移除。</p>
 <p id="chapter-notice" class="notice" aria-live="polite"></p>
 <p class="code">保存不代表真實</p></section>`
 ];
@@ -488,7 +488,7 @@ function startBoot(){
   if(pct<100)requestAnimationFrame(tick);
   else setTimeout(()=>{
    boot.hidden=true;scene.hidden=false;nav.hidden=false;prog.hidden=false;
-   showScene(0,true);
+   showScene(new URLSearchParams(location.search).get('scene')==='index'?scenes.length-1:0,true);
   },reduceMotion?40:450);
  };
  requestAnimationFrame(tick);
