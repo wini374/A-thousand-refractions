@@ -39,6 +39,8 @@ main.travelling .brand,main.travelling .frame{opacity:0} .brand,.frame{transitio
 .title-stack button:disabled{pointer-events:none}
 .title-stack .reveal{opacity:0;transform:translateY(-8px)}
 #title.play .reveal{animation:titleReveal 1.25s ease both;animation-delay:var(--delay)}
+/* Returning from the archive must not replay the title reveal. */
+#title.returned .reveal{animation:none!important;opacity:1!important;transform:none!important}
 @keyframes titleReveal{to{opacity:1;transform:translateY(0)}}
 main.title-view .brand,main.title-view .frame{opacity:0}
 @media(max-height:520px){.title-stack h1{font-size:clamp(25px,7vh,40px)}.title-stack .zh{margin-top:12px}.subtitle-en{margin-top:16px;font-size:16px}.subtitle-zh{margin-top:10px;font-size:14px}.title-stack button{margin-top:14px;padding:10px 18px}}
@@ -216,11 +218,23 @@ function cancelSequence(){sequence++;timers.forEach(clearTimeout);timers=[]}
 function later(fn,ms){const token=sequence;timers.push(setTimeout(()=>{if(token===sequence)fn()},ms))}
 function fadeOut(id,next){$(id).classList.add('invisible');later(()=>{hide(id);next()},reduced?0:1400)}
 function showArchive(){showTitle()}
-function showTitle(){
+function showTitle(instant=false){
  cancelSequence();mode='title';
  $('stage').classList.remove('travelling');$('stage').classList.add('title-view');
- hide('gate');hide('prologue');const panel=$('title');panel.classList.remove('play');panel.hidden=false;panel.classList.remove('invisible');$('enter').disabled=true;void panel.offsetWidth;panel.classList.add('play');
- $('skip').hidden=true;$('replay').hidden=false;later(()=>{$('enter').disabled=false},reduced?0:3950);
+ hide('gate');hide('prologue');
+ const panel=$('title');
+ panel.classList.remove('play','returned');
+ panel.hidden=false;panel.classList.remove('invisible');
+ $('skip').hidden=true;$('replay').hidden=false;
+ if(instant){
+  panel.classList.add('returned');
+  $('enter').disabled=false;
+ }else{
+  $('enter').disabled=true;
+  void panel.offsetWidth;
+  panel.classList.add('play');
+  later(()=>{$('enter').disabled=false},reduced?0:3950);
+ }
 }
 function begin(){cancelSequence();['gate','title','prologue'].forEach(hide);$('title').classList.remove('play');$('stage').classList.remove('title-view');mode='intro';$('stage').classList.add('travelling');start=performance.now();$('skip').hidden=false;$('replay').hidden=true;if(reduced)showTitle()}
 music.volume=.55;
@@ -253,7 +267,7 @@ const STRINGS={
 };
 let lang='zh';
 try{lang=localStorage.getItem('babel_lang')==='en'?'en':'zh'}catch(e){}
-function setLanguage(nextLang){
+function setLanguage(nextLang,animate=true){
  lang=nextLang==='en'?'en':'zh';document.documentElement.lang=lang==='zh'?'zh-Hant':'en';
  try{localStorage.setItem('babel_lang',lang)}catch(e){}
  $('choose-zh').setAttribute('aria-pressed',String(lang==='zh'));$('choose-en').setAttribute('aria-pressed',String(lang==='en'));
@@ -261,7 +275,7 @@ function setLanguage(nextLang){
  $('main-heading').innerHTML=s.title.map((v,i)=>'<span class="reveal" style="--delay:'+i*.35+'s">'+v+'</span>').join('');
  $('title-quote').innerHTML=s.quote;$('enter').textContent=s.enter;$('back').textContent=s.back;
  $('skip').textContent=s.skip;$('replay').textContent=s.replay;updateSound();
- if(mode==='title'){$('title').classList.remove('play');void $('title').offsetWidth;$('title').classList.add('play')}
+ if(mode==='title'&&animate&&!$('title').classList.contains('returned')){$('title').classList.remove('play');void $('title').offsetWidth;$('title').classList.add('play')}
 }
 $('choose-zh').onclick=()=>setLanguage('zh');$('choose-en').onclick=()=>setLanguage('en');
 setLanguage(lang);
@@ -272,8 +286,13 @@ function openArchive(){
 $('enter').onclick=()=>{cancelSequence();openArchive()};
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==archiveFrame.contentWindow||event.data?.type!=='babel-return-title')return;
- archiveLayer.style.opacity='0';document.body.classList.remove('archive-open');
- setTimeout(()=>{archiveLayer.hidden=true;archiveFrame.removeAttribute('src');try{setLanguage(localStorage.getItem('babel_lang')||lang)}catch(e){}showTitle()},650);
+ // Prepare the finished title behind the opaque archive layer first.
+ // Revealing the stage before this step caused a one-frame flash.
+ try{setLanguage(localStorage.getItem('babel_lang')||lang,false)}catch(e){setLanguage(lang,false)}
+ showTitle(true);
+ document.body.classList.remove('archive-open');
+ requestAnimationFrame(()=>{archiveLayer.style.opacity='0'});
+ setTimeout(()=>{archiveLayer.hidden=true;archiveFrame.removeAttribute('src')},700);
 });$('back').onclick=()=>{hide('prologue');showArchive()};$('sound').onclick=toggleSound;
 raf=requestAnimationFrame(draw);
 })();
