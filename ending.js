@@ -217,7 +217,7 @@ function runFormerHero(){
             'The historical record remains unchanged. Your assessment has become another research entry.'
           )}</p>
           <p class="subject">■ ■ ■</p>
-          <p><em>${txt('千重面向 千重折光','然而，真正被活過的 始終只有那一段人生', 'A thousand facets, a thousand refractions.')}</em></p>
+          <p><em>${txt('千重面向，千重折光。', 'A thousand facets, a thousand refractions.')}</em></p>
           <p>${txt(
             '然而，真正被活過的，始終只有那一段人生。',
             'But only one life was lived.'
