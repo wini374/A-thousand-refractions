@@ -18,7 +18,7 @@ try{localStorage.setItem('babel_lang',lang)}catch(e){}
 const story=lang==='en'?d.en:d.zh;
 $('#langButton').textContent=lang==='en'?'中文':'EN';
 $('#archiveLink').href=(lang==='en'?'archive_en.html':'archive.html')+'?scene=index';
-$('#previewLink').href='endings_preview.html?lang='+lang;
+
 $('#kicker').textContent='BABEL / SUBJECT 000 / '+(step===0?'FINAL ASSESSMENT':step===1?'ARCHIVE PROTOCOL':step===2?'RESEARCH RECORD':'RECORD CLOSED');
 $('#heading').textContent=d.enTitle;$('#headingZh').textContent=d.zhTitle;$('#tagline').textContent=txt(d.zhTag,d.enTag);
 let html='';
