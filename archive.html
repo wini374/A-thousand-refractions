@@ -188,8 +188,8 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
 <main class="stage">
 <div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
-<button id="prev" class="action secondary" hidden>上一頁</button>
-<button id="next" class="action">繼續</button>
+<div id="nav" class="nav"><button id="prev" class="action secondary" hidden>上一頁</button>
+<button id="next" class="action">繼續</button></div>
 <div id="progress" class="progress" aria-label="閱讀進度"></div>
 <footer class="foot">BABEL 檔案系統 · 保存不代表真實</footer>
 </main>
@@ -199,13 +199,15 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
 const scenes=[
 `<article class="terminal public-opening">
 <p class="kicker">BABEL／檔案系統</p>
-<p class="code">系統初始化完成<br>檔案狀態：已上線</p><div class="rule"></div><h2>BABEL 的原則</h2>
-<p>歡迎使用 BABEL 中央歷史檔案系統</p>
-<p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引</p>
+<p class="code">系統初始化完成<br>檔案狀態：已啟用</p><div class="rule"></div><h2>BABEL 的原則</h2>
+<p>歡迎使用 BABEL 中央歷史檔案系統。</p>
+<p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
+<div class="rules">
 <article><div class="code">原則 01／保存</div><p>保存紀錄，不代表認可其內容。</p></article>
-<article><div class="code">原則 02／轉錄與翻譯</div></article>
-<article><div class="code">原則 03／詮釋</div></article></div>
-<p><strong>BABEL 不負責判定歷史的唯一解釋</strong></p></article>`,
+<article><div class="code">原則 02／翻譯與轉錄</div><p>翻譯與轉錄可能造成資訊損失。</p></article>
+<article><div class="code">原則 03／詮釋</div><p>不同來源的紀錄，可能對相同事件提出相互矛盾的描述。</p></article>
+</div>
+<p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p></article>`,
 `<article class="document printed">
 <p class="kicker">復原文獻／001</p><h2>致每一位踏入 BABEL 的人</h2>
 <p>我不知道你是為了什麼來到這裡</p>
@@ -227,7 +229,7 @@ const scenes=[
 `<article class="terminal private-opening">
 <p class="kicker">BABEL／存取控制</p>
 <p class="code">已偵測到存取請求<br>身分驗證進行中……<br>驗證完成</p><div class="rule"></div><h2>歡迎進入 BABEL，研究員。</h2>
-<div class="info"><dl class="metadata"><dt>IDENTITY<dt>身分類別</dt><dd>檔案研究員</dd>
+<div class="info"><dl class="metadata"><dt>身分類別</dt><dd>檔案研究員</dd>
 <dt>存取權限</dt><dd>已授權</dd>
 <dt>研究任務</dt><dd>待指派</dd></dl></div>
 <p>身分驗證完成</p>
@@ -255,7 +257,7 @@ const scenes=[
 <p>它們都值得被傾聽。但它們之中的任何一份，都不該被輕易當成他的全部。</p>
 <blockquote>不要讓某一份紀錄，取代他曾經活過的一生。</blockquote>
 <footer>註記狀態：已封存<br>前次判定：已封存</footer></article>`,
-`<section class="index"><p class="kicker">BABEL / 研究對象 000</p><h2>檔案索引已解鎖</h2>
+`<section class="index"><p class="kicker">BABEL／研究對象 000</p><h2>檔案索引已解鎖</h2>
 <p class="code">六組檔案群／待整理</p>
 <div class="transition"><p>兩百年前，他曾真實地活在這個世界上</p><p>兩百年後，人們仍在書寫關於他的故事</p><p class="accent">而現在，輪到你閱讀了</p></div>
 <div class="chapter-grid">
@@ -278,7 +280,7 @@ function render(i,immediate=false){
  const isPublic=current<3;
  const packet=document.getElementById('pack-label');
 packet.innerHTML=isPublic
-  ? '公共文件／BABEL 一般導覽　<strong>' + ('0' + (current + 1)).slice(-2) + ' / 03</strong>'
+  ? '公共導覽文件　<strong>' + ('0' + (current + 1)).slice(-2) + ' / 03</strong>'
   : '研究文件包／個人研究任務　<strong>' + ('0' + (current - 2)).slice(-2) + ' / 04</strong>';
  prev.hidden=current===0;next.hidden=current===scenes.length-1;
 next.textContent=current===2?'開啟個人文件包':current===scenes.length-2?'開啟檔案':'繼續';
