@@ -188,6 +188,37 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
 .identity-note{font-size:11px;color:#b99c73;letter-spacing:.045em;text-align:right}
 .subject-record .metadata{margin:0;row-gap:14px}
 @media(max-width:460px){.identity-row{grid-template-columns:1fr;gap:8px}.identity-value{align-items:flex-start}.identity-note{text-align:left}.redacted-name{font-size:30px}}
+
+/* Handwritten scans: keep all labels and prose within the legible paper area. */
+.document{box-sizing:border-box;overflow:visible;background-position:center center}
+.document.handwritten{padding-top:clamp(98px,13vw,120px);padding-bottom:clamp(95px,12vw,120px)}
+.document.handwritten p.kicker{font-family:Georgia,"Noto Serif TC",serif!important;font-size:11px!important;line-height:1.5!important;letter-spacing:.075em!important;margin:0 0 24px!important;color:#76532d}
+html[lang="en"] .document.handwritten p.kicker{font-family:Georgia,"Times New Roman",serif!important;font-size:10px!important;line-height:1.5!important;letter-spacing:.075em!important;overflow-wrap:normal;word-break:normal}
+html[lang="en"] .document.handwritten h2{font-size:clamp(29px,3.8vw,37px);line-height:1.18;margin-bottom:24px}
+html[lang="en"] .document.handwritten p:not(.kicker){font-size:clamp(21px,2.5vw,24px);line-height:1.34;margin-bottom:17px;letter-spacing:0}
+html[lang="en"] .document.handwritten blockquote{font-size:clamp(22px,2.7vw,25px);line-height:1.35}
+.document.handwritten>*{max-width:100%;overflow-wrap:break-word}
+@media(max-width:600px){
+ .document.handwritten{padding-top:clamp(76px,15vw,100px);padding-bottom:clamp(78px,15vw,100px)}
+ html[lang="en"] .document.handwritten p:not(.kicker){font-size:clamp(19px,4.7vw,22px);line-height:1.29}
+ html[lang="en"] .document.handwritten h2{font-size:clamp(27px,6vw,33px)}
+}
+/* Access verification is an independent, time-based sequence, not archival prose. */
+.auth-overlay{width:min(100%,820px);min-height:440px;margin:0 auto;display:grid;place-items:center}
+.auth-overlay[hidden]{display:none!important}
+.auth-panel{position:relative;width:100%;padding:clamp(32px,6vw,65px);border:1px solid #9a81564d;background:linear-gradient(145deg,#11141b,#090a0e);box-shadow:0 0 70px #0007;text-align:center;color:#e3d7c3}
+.auth-kicker,.auth-bottom{font:11px/1.8 Georgia,"Noto Serif TC",serif;letter-spacing:.15em;color:#baa37d}
+.auth-icon{height:110px;display:grid;place-items:center;color:#d2b88c;font-size:78px;text-shadow:0 0 24px #c3a57655;animation:auth-pulse 2.2s ease-in-out infinite}
+.auth-heading{font-size:clamp(19px,2.9vw,27px);letter-spacing:.06em;margin:12px 0 21px}
+.auth-step{min-height:30px;font:13px/2 ui-monospace,Consolas,"Noto Sans TC",monospace;color:#cfbb94}
+.auth-track{height:2px;margin:24px auto 10px;background:#6e625180;max-width:560px;overflow:hidden}
+.auth-fill{height:100%;background:#ddc194;box-shadow:0 0 10px #c7a16d;width:0;transition:width .075s linear}
+.auth-progressline{max-width:560px;margin:0 auto 55px;display:flex;justify-content:space-between;gap:12px;font:10px ui-monospace,monospace;color:#ad9b7e;letter-spacing:.08em}
+.auth-bottom{opacity:.65}
+.system-confirmed{color:#d5bd90!important;font-size:14px!important}
+@keyframes auth-pulse{50%{opacity:.5;transform:scale(.94)}}
+@media(prefers-reduced-motion:reduce){.auth-icon{animation:none}.auth-fill{transition:none}}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,6 +230,17 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
 <main class="stage">
 <div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
+<section id="auth-overlay" class="auth-overlay" hidden aria-label="研究員身分驗證">
+  <div class="auth-panel">
+    <div class="auth-kicker">BABEL / 身分驗證協定</div>
+    <div class="auth-icon" aria-hidden="true"><span>◇</span></div>
+    <div class="auth-heading">正在開啟個人研究文件包</div>
+    <div id="auth-step" class="auth-step" aria-live="polite">正在建立安全連線……</div>
+    <div class="auth-track"><div id="auth-progress" class="auth-fill"></div></div>
+    <div class="auth-progressline"><span>研究員權限驗證</span><span id="auth-percent">0%</span></div>
+    <div class="auth-bottom">BABEL 中央歷史檔案系統</div>
+  </div>
+</section>
 <div id="nav" class="nav"><button id="prev" class="action secondary" hidden>上一頁</button>
 <button id="next" class="action">繼續</button></div>
 <div id="progress" class="progress" aria-label="閱讀進度"></div>
@@ -238,14 +280,12 @@ const scenes=[
 <p>或許它們都不完整。也或許，你只是還沒有找到那片缺失的碎片。</p>
 <footer>—— 無署名手寫註記</footer></article>`,
 `<article class="terminal private-opening">
-<p class="kicker">BABEL／存取控制</p>
-<p class="code">已偵測到存取請求<br>身分驗證進行中……<br>驗證完成</p><div class="rule"></div><h2>歡迎進入 BABEL，研究員。</h2>
+<p class="kicker">BABEL／研究員資料</p><h2>歡迎進入 BABEL，研究員。</h2>
+<p class="system-confirmed">身分與存取權限已通過驗證。</p><div class="rule"></div>
 <div class="info"><dl class="metadata"><dt>身分類別</dt><dd>檔案研究員</dd>
-<dt>存取權限</dt><dd>已授權</dd>
-<dt>研究任務</dt><dd>待指派</dd></dl></div>
-<p>身分驗證完成</p>
-<p>根據現有權限，你可以檢索、比對及註記尚未完成歸檔的歷史紀錄</p>
-<p>你所建立的研究結論，將作為該檔案後續整理的參考</p></article>`,
+<dt>存取權限</dt><dd>已授權</dd><dt>研究任務</dt><dd>待指派</dd></dl></div>
+<p>根據現有權限，你可以檢索、比對及註記尚未完成歸檔的歷史紀錄。</p>
+<p>你所建立的研究結論，將作為該檔案後續整理的參考。</p></article>`,
 `<article class="terminal">
 <p class="kicker">已接收新任務</p><h2>未完成的歷史人物索引</h2><div class="rule"></div>
 <p>系統已為你分配一份尚未完成的研究檔案</p>
@@ -285,34 +325,65 @@ const scenes=[
 <p class="code">保存不代表真實</p></section>`
 ];
 const scene=document.getElementById('scene'),prev=document.getElementById('prev'),next=document.getElementById('next'),prog=document.getElementById('progress');
-let current=0,locked=false;
-function render(i,immediate=false){
+const nav=document.getElementById('nav'),auth=document.getElementById('auth-overlay');
+const authFill=document.getElementById('auth-progress'),authPercent=document.getElementById('auth-percent'),authStep=document.getElementById('auth-step');
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const authSteps=['正在建立安全連線……','正在讀取身分憑證……','正在核對研究員權限……','正在開放個人檔案……','驗證完成。'];
+let current=0,locked=false,authRunning=false,authFrame=0,sceneTimer=0;
+function showScene(i,immediate=false){
  current=Math.max(0,Math.min(scenes.length-1,i));
  const swap=()=>{
- scene.innerHTML=scenes[current];
- const isPublic=current<3;
- const packet=document.getElementById('pack-label');
-packet.innerHTML=isPublic
-  ? '公共導覽文件　<strong>' + ('0' + (current + 1)).slice(-2) + ' / 03</strong>'
-  : '研究文件包／個人研究任務　<strong>' + ('0' + (current - 2)).slice(-2) + ' / 04</strong>';
- prev.hidden=current===0;next.hidden=current===scenes.length-1;
-next.textContent=current===2?'開啟個人文件包':current===scenes.length-2?'開啟檔案':'繼續';
- const packetLength=isPublic?3:4;
- const packetPosition=isPublic?current:current-3;
- prog.innerHTML=Array.from({length:packetLength},(_,n)=>'<span class="'+(n<=packetPosition?'active':'')+'"></span>').join('');
- prog.setAttribute('aria-label',(isPublic?'公共文件':'私人文件')+' '+(packetPosition+1)+' / '+packetLength);
- const chapters=scene.querySelectorAll('.chapter');
- chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='「'+b.textContent.trim().replace(/\s+/g,' ')+'」尚未開放。正式章節完成後將開放閱讀。'}));
- window.scrollTo({top:0,behavior:'instant'});scene.classList.add('visible');locked=false;
+  scene.innerHTML=scenes[current];
+  const isPublic=current<3;
+  const packet=document.getElementById('pack-label');
+  packet.innerHTML=isPublic?'公共導覽文件　<strong>'+('0'+(current+1)).slice(-2)+' / 03</strong>':'研究文件包／個人研究任務　<strong>'+('0'+(current-2)).slice(-2)+' / 04</strong>';
+  prev.hidden=current===0;next.hidden=current===scenes.length-1;
+  next.textContent=current===2?'開啟個人文件包':current===scenes.length-2?'開啟檔案':'繼續';
+  const len=isPublic?3:4,pos=isPublic?current:current-3;
+  prog.innerHTML=Array.from({length:len},(_,n)=>'<span class="'+(n<=pos?'active':'')+'"></span>').join('');
+  prog.setAttribute('aria-label',(isPublic?'公共文件':'私人文件')+' '+(pos+1)+' / '+len);
+  scene.querySelectorAll('.chapter').forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='此章節尚未開放。正式章節完成後將開放閱讀。'}));
+  window.scrollTo({top:0,behavior:'instant'});
+  scene.classList.add('visible');locked=false;
  };
+ clearTimeout(sceneTimer);
  if(immediate){swap();return}
- if(locked)return;locked=true;scene.classList.remove('visible');setTimeout(swap,260);
+ locked=true;scene.classList.remove('visible');sceneTimer=setTimeout(swap,reduceMotion?0:260);
+}
+function startAuthentication(){
+ if(locked||authRunning)return;
+ authRunning=true;locked=true;scene.classList.remove('visible');
+ nav.hidden=true;prog.hidden=true;
+ authFill.style.width='0%';authPercent.textContent='0%';authStep.textContent=authSteps[0];
+ setTimeout(()=>{
+  scene.hidden=true;auth.hidden=false;window.scrollTo({top:0,behavior:'instant'});
+  const duration=reduceMotion?180:3200,started=performance.now();
+  const tick=(now)=>{
+   if(!authRunning)return;
+   const pct=Math.min(100,Math.floor((now-started)/duration*100));
+   authFill.style.width=pct+'%';authPercent.textContent=pct+'%';
+   const step=pct<22?0:pct<52?1:pct<78?2:pct<100?3:4;
+   authStep.textContent=authSteps[step];
+   if(pct<100){authFrame=requestAnimationFrame(tick)}
+   else {setTimeout(()=>{
+    auth.hidden=true;scene.hidden=false;nav.hidden=false;prog.hidden=false;
+    authRunning=false;locked=false;showScene(3,true);
+   },reduceMotion?40:640)}
+  };
+  authFrame=requestAnimationFrame(tick);
+ },reduceMotion?0:290);
+}
+function render(i,immediate=false){
+ if(locked||authRunning)return;
+ const target=Math.max(0,Math.min(scenes.length-1,i));
+ if(current===2&&target===3&&!immediate){startAuthentication();return}
+ showScene(target,immediate);
 }
 next.onclick=()=>render(current+1);prev.onclick=()=>render(current-1);
-document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'&&!next.hidden)next.click();if(e.key==='ArrowLeft'&&!prev.hidden)prev.click()});
+document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||authRunning)return;if(e.key==='ArrowRight'&&!next.hidden)next.click();if(e.key==='ArrowLeft'&&!prev.hidden)prev.click()});
 document.querySelectorAll('.return-home').forEach(a=>a.addEventListener('click',e=>{if(window.parent!==window){e.preventDefault();window.parent.postMessage({type:'babel-return-title'},location.origin)}}));
 document.querySelectorAll('.lang-links a:not(.return-home)').forEach(a=>a.addEventListener('click',()=>{try{localStorage.setItem('babel_lang',a.textContent.trim()==='EN'?'en':'zh')}catch(e){}}));
-render(0,true);
+showScene(0,true);
 })();
 </script>
 </body>
