@@ -84,3 +84,25 @@ body[data-ending="exile"] .story p{
 body[data-ending="exile"] .closing p:last-child{
   margin-top: 14px;
 }
+
+/* Ending I: one shared left edge for the title, myth reference, questions and prose. */
+body[data-ending="exile"] #mythParallel,
+body[data-ending="exile"] .myth-parallel,
+body[data-ending="exile"] .story {
+  width:100%;
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+  padding-left:0;
+  padding-right:0;
+  box-sizing:border-box;
+}
+body[data-ending="exile"] .myth-title,
+body[data-ending="exile"] .myth-questions,
+body[data-ending="exile"] .myth-questions p,
+body[data-ending="exile"] .story p {
+  margin-left:0;
+  padding-left:0;
+  text-indent:0;
+  text-align:left;
+}
