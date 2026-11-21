@@ -14,3 +14,73 @@ body[data-ending="exile"] .hero-record .ending-word{font-size:clamp(22px,3.4vw,3
 body[data-ending="exile"] .myth-parallel{margin-top:6px;margin-bottom:35px}
 body[data-ending="exile"] .myth-questions{margin-top:18px}
 body[data-ending="exile"] button.action:disabled{opacity:.5;cursor:wait;pointer-events:none}
+/* Ending I refined layout */
+body[data-ending="exile"] #heading{
+  margin-bottom: 24px;
+}
+
+body[data-ending="exile"] .hero-terminal .terminal-line{
+  min-height: 1.75em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+body[data-ending="exile"] .hero-terminal hr{
+  margin: 20px 0;
+}
+
+body[data-ending="exile"] .terminal-after{
+  margin-top: 18px;
+}
+
+body[data-ending="exile"] button.action:disabled{
+  opacity: .5;
+  cursor: wait;
+  pointer-events: none;
+}
+
+body[data-ending="exile"] .myth-parallel{
+  max-width: 640px;
+  margin: 0 auto 36px;
+  padding: 0 0 0 0;
+  border-top: 1px solid #8a765450;
+  border-bottom: 1px solid #8a765450;
+  display: block;
+}
+
+body[data-ending="exile"] .myth-title{
+  display: block;
+  color: #ddc6a2;
+  font-size: clamp(16px, 2.5vw, 21px);
+  letter-spacing: .08em;
+  padding: 18px 0 18px;
+}
+
+body[data-ending="exile"] .myth-questions{
+  width: 100%;
+  margin: 0;
+  padding: 24px 0 6px;
+  border-top: 1px solid #8a765450;
+  color: #e8dbc8;
+}
+
+body[data-ending="exile"] .myth-questions p{
+  font-size: clamp(16px, 2.2vw, 20px);
+  font-weight: 400;
+  line-height: 2.05;
+  margin: 0 0 18px;
+  text-align: left;
+}
+
+body[data-ending="exile"] .story{
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+body[data-ending="exile"] .story p{
+  text-align: left;
+}
+
+body[data-ending="exile"] .closing p:last-child{
+  margin-top: 14px;
+}
