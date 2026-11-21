@@ -8,6 +8,52 @@
 <meta name="description" content="BABEL — A Thousand Refractions. Enter the archive.">
 <title>BABEL — A Thousand Refractions</title>
 <style>
+.system-boot{
+  margin-bottom:30px;
+}
+
+.boot-line{
+  margin:8px 0;
+  font:13px/1.9 ui-monospace,Consolas,"Noto Sans TC",monospace;
+  color:#cfbb94;
+  opacity:0;
+  transform:translateY(6px);
+  animation:bootFade .45s ease forwards;
+}
+
+.boot-line:nth-of-type(1){animation-delay:.15s;}
+.boot-line:nth-of-type(2){animation-delay:.55s;}
+.boot-line:nth-of-type(3){animation-delay:.95s;}
+
+.system-body{
+  opacity:0;
+  transform:translateY(10px);
+  animation:bodyReveal .55s ease forwards;
+  animation-delay:1.45s;
+}
+
+@keyframes bootFade{
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+@keyframes bodyReveal{
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .boot-line,
+  .system-body{
+    animation:none;
+    opacity:1;
+    transform:none;
+  }
+}  
 :root{color-scheme:dark;--ink:#e7dcc8;--gold:#c0a77d;--muted:#a79a89;--line:#66543e;--bg:#0b0b0e}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -252,14 +298,38 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(22px,2.7vw,25px
 'use strict';
 const scenes=[
 `<article class="terminal public-opening">
-<p class="kicker">BABEL／檔案系統</p>
-<p class="code">系統初始化完成<br>檔案狀態：已啟用</p><div class="rule"></div><h2>BABEL 的原則</h2>
-<p>歡迎使用 BABEL 中央歷史檔案系統。</p>
-<p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
-<div class="rules">
-<article><div class="code">原則 01／保存</div><p>保存紀錄，不代表認可其內容。</p></article>
-<article><div class="code">原則 02／翻譯與轉錄</div><p>翻譯與轉錄可能造成資訊損失。</p></article>
-<article><div class="code">原則 03／詮釋</div><p>不同來源的紀錄，可能對相同事件提出相互矛盾的描述。</p></article>
+  <div class="system-boot" aria-live="polite">
+    <p class="kicker">BABEL／檔案系統</p>
+    <p class="boot-line">正在初始化……</p>
+    <p class="boot-line">正在載入中央歷史檔案……</p>
+    <p class="boot-line">系統狀態：已啟用</p>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="system-body">
+    <h2>BABEL 的原則</h2>
+    <p>歡迎使用 BABEL 中央歷史檔案系統。</p>
+    <p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
+
+    <div class="rules">
+      <article>
+        <div class="code">原則 01／保存</div>
+        <p>保存紀錄，不代表認可其內容。</p>
+      </article>
+      <article>
+        <div class="code">原則 02／翻譯與轉錄</div>
+        <p>翻譯與轉錄可能造成資訊損失。</p>
+      </article>
+      <article>
+        <div class="code">原則 03／詮釋</div>
+        <p>不同來源的紀錄，可能對相同事件提出相互矛盾的描述。</p>
+      </article>
+    </div>
+
+    <p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p>
+  </div>
+</article>
 </div>
 <p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p></article>`,
 `<article class="document printed">
