@@ -85,7 +85,7 @@ html[lang="en"] .document.handwritten{font-family:"Caveat",cursive}
 html[lang="en"] .document.handwritten h2{font-family:"Caveat",cursive;font-size:clamp(32px,5vw,48px)}
 html[lang="en"] .document.handwritten p{font-size:clamp(24px,3.2vw,30px);line-height:1.48}
 html[lang="en"] .document.handwritten blockquote{font-size:clamp(25px,3.6vw,34px)}
-.private-opening:before{content:"RESTRICTED DOCUMENT PACKET / PERSONAL ACCESS";display:block;font:10px Georgia,serif;letter-spacing:.12em;color:#c9ab83;border-bottom:1px solid #9e805655;margin-bottom:24px;padding-bottom:16px}
+.private-opening:before{content:"研究員專屬文件包／私人存取權限";display:block;font:10px Georgia,serif;letter-spacing:.12em;color:#c9ab83;border-bottom:1px solid #9e805655;margin-bottom:24px;padding-bottom:16px}
 @media(max-width:600px){.document{padding:38px 28px;min-height:480px}.document .kicker{font-size:9px}.document.handwritten p{font-size:19px;line-height:1.78}.pack-label{font-size:9px;line-height:1.7}}
 
 /* Natural parchment: preserve the scanned page proportions and text boundaries. */
@@ -172,6 +172,11 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
  .document .kicker{font-size:8px;letter-spacing:.05em}
 }
 
+
+/* A subtle smoked edge around aged manuscripts. */
+.document{isolation:isolate;filter:drop-shadow(0 19px 27px rgba(0,0,0,.64)) drop-shadow(0 0 12px rgba(0,0,0,.32))}
+.document::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 53%,rgba(46,27,11,.09) 72%,rgba(31,19,10,.25) 88%,rgba(12,9,7,.43) 100%);mix-blend-mode:multiply}
+.document > *{position:relative;z-index:1}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,14 +184,14 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(24px,3vw,29px)}
 </head>
 <body>
 <div class="frame"></div>
-<header class="topbar"><span>B A B E L &nbsp; / &nbsp; CENTRAL ARCHIVE</span><span class="lang-links"><a href="archive.html" aria-current="page">中</a><a href="archive_en.html">EN</a><a class="return-home" href="index.html" aria-label="返回首頁">RETURN TO TITLE</a></span></header>
+<header class="topbar"><span>B A B E L &nbsp; / &nbsp; 中央檔案館</span><span class="lang-links"><a href="archive.html" aria-current="page">中</a><a href="archive_en.html">EN</a><a class="return-home" href="index.html" aria-label="返回首頁">返回首頁</a></span></header>
 <main class="stage">
 <div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
 <button id="prev" class="action secondary" hidden>上一頁</button>
 <button id="next" class="action">繼續</button>
 <div id="progress" class="progress" aria-label="閱讀進度"></div>
-<footer class="foot">BABEL ARCHIVAL SYSTEM · PRESERVATION DOES NOT GUARANTEE TRUTH</footer>
+<footer class="foot">BABEL 檔案系統 · 保存不代表真實</footer>
 </main>
 <script>
 (()=>{
@@ -235,13 +240,13 @@ const scenes=[
 <p>由於資料來源與內容存在差異，目前仍無法完成統一歸檔</p>
 <div class="info"><div class="code">研究對象 / 000</div><div class="subject">■ ■ ■</div><dl class="metadata">
 <dt>活動年代</dt><dd>約 200 年前</dd><dt>原始姓名</dt><dd>無法辨讀</dd><dt>相關檔案群</dt><dd>6</dd>
-<dt>前次研究</dt><dd>COMPLETED</dd><dt>身分分類</dt><dd>UNRESOLVED</dd>
-<dt>檔案狀態</dt><dd>PENDING REVIEW</dd></dl></div>
+<dt>前次研究</dt><dd>已完成</dd><dt>身分分類</dt><dd>未能確認</dd>
+<dt>檔案狀態</dt><dd>待審核</dd></dl></div>
 <p>前次研究已結束，但該人物的身分分類仍未得到確認。前任研究員的最終判定暫不公開，以避免影響本次獨立評估。</p>
 <p>你的任務是重新檢視六組檔案，整理其來源、差異與可能的關聯。</p>
-<p class="code">RESEARCH ACCESS GRANTED</p></article>`,
+<p class="code">已開放研究權限</p></article>`,
 `<article class="document handwritten">
-<p class="kicker">ATTACHED NOTE / PREVIOUS RESEARCH SESSION</p><h2>給下一位研究員</h2>
+<p class="kicker">附註／前次研究紀錄</p><h2>給下一位研究員</h2>
 <p>如果你正在閱讀這段文字，那麼這份研究大概又被重新開啟了。</p>
 <p>我不知道你會在這些紀錄中看見什麼，也不知道當你讀完所有文獻後，會得出怎樣的結論。</p>
 <p>但我希望你記得一件事。</p>
@@ -249,20 +254,20 @@ const scenes=[
 <p>那些文字可能包含敬意、憤怒、恐懼、思念，或是某些連書寫者自己都未曾察覺的偏見。</p>
 <p>它們都值得被傾聽。但它們之中的任何一份，都不該被輕易當成他的全部。</p>
 <blockquote>不要讓某一份紀錄，取代他曾經活過的一生。</blockquote>
-<footer>ANNOTATION STATUS: ARCHIVED<br>PREVIOUS ASSESSMENT: SEALED</footer></article>`,
+<footer>註記狀態：已封存<br>前次判定：已封存</footer></article>`,
 `<section class="index"><p class="kicker">BABEL / 研究對象 000</p><h2>檔案索引已解鎖</h2>
-<p class="code">6 ARCHIVE GROUPS / PENDING RECONSTRUCTION</p>
+<p class="code">六組檔案群／待整理</p>
 <div class="transition"><p>兩百年前，他曾真實地活在這個世界上</p><p>兩百年後，人們仍在書寫關於他的故事</p><p class="accent">而現在，輪到你閱讀了</p></div>
 <div class="chapter-grid">
-<button class="chapter" data-file="chapter_1.html" type="button"><span class="number">I</span><span>CHAPTER I</span><span class="state">尚未開放 / PENDING</span></button>
-<button class="chapter" data-file="chapter_2.html" type="button"><span class="number">II</span><span>CHAPTER II</span><span class="state">尚未開放 / PENDING</span></button>
-<button class="chapter" data-file="chapter_3.html" type="button"><span class="number">III</span><span>CHAPTER III</span><span class="state">尚未開放 / PENDING</span></button>
-<button class="chapter" data-file="chapter_4.html" type="button"><span class="number">IV</span><span>CHAPTER IV</span><span class="state">尚未開放 / PENDING</span></button>
-<button class="chapter" data-file="chapter_5.html" type="button"><span class="number">V</span><span>CHAPTER V</span><span class="state">尚未開放 / PENDING</span></button>
-<button class="chapter" data-file="chapter_6.html" type="button"><span class="number">VI</span><span>CHAPTER VI</span><span class="state">尚未開放 / PENDING</span></button>
+<button class="chapter" data-file="chapter_1.html" type="button"><span class="number">I</span><span>第一章</span><span class="state">尚未開放</span></button>
+<button class="chapter" data-file="chapter_2.html" type="button"><span class="number">II</span><span>第二章</span><span class="state">尚未開放</span></button>
+<button class="chapter" data-file="chapter_3.html" type="button"><span class="number">III</span><span>第三章</span><span class="state">尚未開放</span></button>
+<button class="chapter" data-file="chapter_4.html" type="button"><span class="number">IV</span><span>第四章</span><span class="state">尚未開放</span></button>
+<button class="chapter" data-file="chapter_5.html" type="button"><span class="number">V</span><span>第五章</span><span class="state">尚未開放</span></button>
+<button class="chapter" data-file="chapter_6.html" type="button"><span class="number">VI</span><span>第六章</span><span class="state">尚未開放</span></button>
 </div>
 <p id="chapter-notice" class="notice" aria-live="polite"></p>
-<p class="code">PRESERVATION DOES NOT GUARANTEE TRUTH</p></section>`
+<p class="code">保存不代表真實</p></section>`
 ];
 const scene=document.getElementById('scene'),prev=document.getElementById('prev'),next=document.getElementById('next'),prog=document.getElementById('progress');
 let current=0,locked=false;
@@ -282,7 +287,7 @@ next.textContent=current===2?'開啟個人文件包':current===scenes.length-2?'
  prog.innerHTML=Array.from({length:packetLength},(_,n)=>'<span class="'+(n<=packetPosition?'active':'')+'"></span>').join('');
  prog.setAttribute('aria-label',(isPublic?'公共文件':'私人文件')+' '+(packetPosition+1)+' / '+packetLength);
  const chapters=scene.querySelectorAll('.chapter');
- chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='「'+b.textContent.trim().replace(/\s+/g,' ')+'」尚未開放。正式章節完成後，將連結至 '+b.dataset.file+'。'}));
+ chapters.forEach(b=>b.addEventListener('click',()=>{document.getElementById('chapter-notice').textContent='「'+b.textContent.trim().replace(/\s+/g,' ')+'」尚未開放。正式章節完成後將開放閱讀。'}));
  window.scrollTo({top:0,behavior:'instant'});scene.classList.add('visible');locked=false;
  };
  if(immediate){swap();return}
