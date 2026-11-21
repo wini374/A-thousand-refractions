@@ -3,3 +3,5 @@
 
 /* Ending I: an interpretive mythological parallel, not an assertion of historical identity. */
 .myth-parallel{margin:0 0 28px;padding:15px 20px;border-top:1px solid #8a765450;border-bottom:1px solid #8a765450;display:flex;flex-direction:column;gap:8px;align-items:flex-start}.myth-label{font:10px/1.6 Georgia,serif;letter-spacing:.15em;color:#a69b8b}.myth-title{color:#ddc6a2;font-size:clamp(16px,2.5vw,21px);letter-spacing:.08em}
+
+.myth-questions{width:100%;margin:14px 0 0;padding:18px 0 3px;border-top:1px solid #8a765450;color:#e8dbc8}.myth-questions p{font-size:clamp(16px,2.2vw,20px);font-weight:400;line-height:2.05;margin:0 0 12px}.myth-questions p:first-child{margin-bottom:24px}
