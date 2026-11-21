@@ -230,10 +230,10 @@ function runFormerHero(){
     $('#next').hidden = phase === 3;
     $('#return').hidden = phase !== 3;
 
-    $('#next').disabled = false;
+    $('#next').disabled = (phase === 0 || phase === 1);
     if(phase === 2){
       $('#next').textContent = txt('封存結局', 'ARCHIVE ENDING');
-    } else if(phase !== 3) {
+    } else if(phase !== 3 && phase !== 0 && phase !== 1) {
       $('#next').textContent = txt('繼續', 'CONTINUE');
     }
 
