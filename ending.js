@@ -80,6 +80,8 @@ function runFormerHero(){
     document.documentElement.lang=lang==='en'?'en':'zh-Hant';
     try{localStorage.setItem('babel_lang',lang)}catch(e){}
     $('#langButton').textContent=lang==='en'?'中文':'EN';
+    document.querySelector('.top > span').textContent=txt('巴別／最終歷史評估','BABEL / FINAL HISTORICAL ASSESSMENT');
+    document.title=txt('昔日的英雄 — 千重折光','The Former Hero — A Thousand Refractions');
     $('#archiveLink').href=(lang==='en'?'archive_en.html':'archive.html')+'?scene=index';
     $('#archiveLink').textContent=txt('返回檔案館','RETURN TO ARCHIVE');
     $('#return').href=$('#archiveLink').href;
