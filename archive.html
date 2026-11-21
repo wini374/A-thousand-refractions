@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0b0e">
-<meta name="description" content="BABEL — A Thousand Refractions. Enter the archive.">
-<title>BABEL — A Thousand Refractions</title>
+<meta name="description" content="巴別 — 千重折光：中央歷史檔案館。">
+<title>巴別 — 千重折光</title>
 <style>
 .system-boot{
   margin-bottom:30px;
@@ -298,11 +298,11 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(19px,2.25vw,21p
 <div id="pack-label" class="pack-label" aria-live="polite"></div>
 <div id="scene" class="scene" aria-live="polite"></div>
 
-<section id="boot-overlay" class="boot-overlay" aria-label="BABEL 系統啟動">
+<section id="boot-overlay" class="boot-overlay" aria-label="巴別 系統啟動">
   <div class="auth-panel boot-panel">
-    <div class="auth-kicker">BABEL／中央歷史檔案系統</div>
+    <div class="auth-kicker">巴別／中央歷史檔案系統</div>
     <div class="boot-emblem" aria-hidden="true">◇</div>
-    <div class="auth-heading">正在連線至 BABEL</div>
+    <div class="auth-heading">正在連線至 巴別</div>
     <div id="boot-step" class="auth-step" aria-live="polite">初始化檔案系統……</div>
     <div class="auth-track"><div id="boot-fill" class="auth-fill"></div></div>
     <div class="auth-progressline"><span>中央歷史檔案館</span><span id="boot-percent">0%</span></div>
@@ -311,27 +311,27 @@ html[lang="en"] .document.handwritten blockquote{font-size:clamp(19px,2.25vw,21p
 </section>
 <section id="auth-overlay" class="auth-overlay" hidden aria-label="研究員身分驗證">
   <div class="auth-panel">
-    <div class="auth-kicker">BABEL / 身分驗證協定</div>
+    <div class="auth-kicker">巴別 / 身分驗證協定</div>
     <div class="auth-icon" aria-hidden="true"><span>◇</span></div>
     <div class="auth-heading">正在開啟個人研究文件包</div>
     <div id="auth-step" class="auth-step" aria-live="polite">正在建立安全連線……</div>
     <div class="auth-track"><div id="auth-progress" class="auth-fill"></div></div>
     <div class="auth-progressline"><span>研究員權限驗證</span><span id="auth-percent">0%</span></div>
-    <div class="auth-bottom">BABEL 中央歷史檔案系統</div>
+    <div class="auth-bottom">巴別 中央歷史檔案系統</div>
   </div>
 </section>
 <div id="nav" class="nav"><button id="prev" class="action secondary" hidden>上一頁</button>
 <button id="next" class="action">繼續</button></div>
 <div id="progress" class="progress" aria-label="閱讀進度"></div>
-<footer class="foot">BABEL 檔案系統 · 保存不代表真實</footer>
+<footer class="foot">巴別 檔案系統 · 保存不代表真實</footer>
 </main>
 <script>
 (()=>{
 'use strict';
 const scenes=[
 `<article class="terminal public-opening">
-    <h2>BABEL 的原則</h2>
-    <p>歡迎使用 BABEL 中央歷史檔案系統。</p>
+    <h2>巴別 的原則</h2>
+    <p>歡迎使用 巴別 中央歷史檔案系統。</p>
     <p>本系統的主要職責為紀錄保存、文獻轉錄、語言轉譯，以及歷史資料的交叉索引。</p>
 
     <div class="rules">
@@ -349,17 +349,17 @@ const scenes=[
       </article>
     </div>
 
-    <p><strong>BABEL 不負責判定歷史的唯一解釋。</strong></p>
+    <p><strong>巴別 不負責判定歷史的唯一解釋。</strong></p>
   </article>`,
 `<article class="document printed">
-<p class="kicker">復原文獻／001</p><h2>致每一位踏入 BABEL 的人</h2>
+<p class="kicker">復原文獻／001</p><h2>致每一位踏入 巴別 的人</h2>
 <p>我不知道你是為了什麼來到這裡</p>
 <p>或許，你希望尋找某個早已被遺忘的名字；又或許，你只是想知道，數百年前的人們究竟過著怎樣的生活</p>
-<p>無論如何，歡迎來到 BABEL</p>
+<p>無論如何，歡迎來到 巴別</p>
 <p>這裡收藏著人類留下的無數紀錄。從刻在石頭上的第一行文字，到那些甚至來不及送出的最後一封信。</p>
 <p>我們盡可能地保存它們。不論內容是否真實，不論書寫者的身分，也不論它是否符合後世對歷史的想像。</p>
 <blockquote>即使一份紀錄是錯誤的，它依然能告訴我們，曾經有人如此理解這個世界。</blockquote>
-<footer>—— 摘自《BABEL 訪客導覽手記》，作者未署名</footer></article>`,
+<footer>—— 摘自《巴別 訪客導覽手記》，作者未署名</footer></article>`,
 `<article class="document handwritten">
 <p class="kicker">手寫註記／未註明日期</p><h2>留在頁邊的文字</h2>
 <p>我曾經以為，只要蒐集足夠多的證據，我們終究能夠還原過去。</p>
@@ -370,7 +370,7 @@ const scenes=[
 <p>或許它們都不完整。也或許，你只是還沒有找到那片缺失的碎片。</p>
 <footer>—— 無署名手寫註記</footer></article>`,
 `<article class="terminal private-opening">
-<p class="kicker">BABEL／研究員資料</p><h2>歡迎進入 BABEL，研究員。</h2>
+<p class="kicker">巴別／研究員資料</p><h2>歡迎進入 巴別，研究員。</h2>
 <p class="system-confirmed">身分與存取權限已通過驗證。</p><div class="rule"></div>
 <div class="info"><dl class="metadata"><dt>身分類別</dt><dd>檔案研究員</dd>
 <dt>存取權限</dt><dd>已授權</dd><dt>研究任務</dt><dd>待指派</dd></dl></div>
@@ -400,7 +400,7 @@ const scenes=[
 <p>它們都值得被傾聽。但它們之中的任何一份，都不該被輕易當成他的全部</p>
 <blockquote>不要讓某一份紀錄，取代他曾經活過的一生</blockquote>
 <footer>註記狀態：已封存<br>前次判定：已封存</footer></article>`,
-`<section class="index"><p class="kicker">BABEL／研究對象 000</p><h2>檔案索引已解鎖</h2>
+`<section class="index"><p class="kicker">巴別／研究對象 000</p><h2>檔案索引已解鎖</h2>
 <p class="code">六組檔案群／待整理</p>
 <div class="transition"><p>兩百年前，他曾真實地活在這個世界上</p><p>兩百年後，人們仍在書寫關於他的故事</p><p class="accent">而現在，輪到你閱讀了</p></div>
 <div class="chapter-grid">
