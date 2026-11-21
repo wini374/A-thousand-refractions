@@ -16,65 +16,264 @@ const lines=(arr,cls='story')=>'<div class="'+cls+'">'+arr.map(x=>'<p>'+escape(x
 /* Ending I follows the archival decision chronologically:
    assessment transcript -> sealed version -> myth reflection and narrative -> closure. */
 function runFormerHero(){
-  let phase=0,completed=false,typingTimer=null,typingGeneration=0;
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const phaseNames={
-    zh:['歷史評估','研究紀錄','昔日的英雄','結局封存'],
-    en:['HISTORICAL ASSESSMENT','RESEARCH RECORD','THE FORMER HERO','ARCHIVE CLOSED']
+  let phase = 0;
+  let completed = false;
+  let typingTimer = null;
+  let typingToken = 0;
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const phaseNames = {
+    zh: ['歷史評估', '研究紀錄', '昔日的英雄', '結局封存'],
+    en: ['HISTORICAL ASSESSMENT', 'RESEARCH RECORD', 'THE FORMER HERO', 'ARCHIVE CLOSED']
   };
-  const heroQuestions={
-    zh:['那一天，究竟是誰先選擇了離開？','是世界不再需要他？','還是他終於不再需要這個世界？'],
-    en:['On that day, who chose to leave first?','Had the world stopped needing him?','Or had he finally stopped needing the world?']
+
+  const heroQuestions = {
+    zh: [
+      '那一天，究竟是誰先選擇了離開？',
+      '是世界不再需要他？',
+      '還是他終於不再需要這個世界？'
+    ],
+    en: [
+      'On that day, who chose to leave first?',
+      'Had the world stopped needing him?',
+      'Or had he finally stopped needing the world?'
+    ]
   };
-  function endTyping(){
-    typingGeneration++;
-    if(typingTimer!==null){clearTimeout(typingTimer);typingTimer=null}
+
+  function stopTyping(){
+    typingToken++;
+    if(typingTimer !== null){
+      clearTimeout(typingTimer);
+      typingTimer = null;
+    }
   }
-  function sequence(){
-    const classification=txt(d.zhTitle,d.enTitle);
+
+  function terminalSequencePhase0(){
     return [
-      {value:txt('> [ 歷史評估已完成。 ]','> [ Historical assessment complete. ]')},
-      {value:'> [ '+classification+' ]'},
-      {value:txt('> [ 正在核對歷史研究版本…… ]','> [ Checking historical research versions... ]')},
-      {divider:true},
-      {value:txt('> [ 警告：分類結果不一致。 ]','> [ WARNING: classification mismatch. ]'),severity:'warn'},
-      {value:txt('> [ 本次判斷與前次研究紀錄存在差異。 ]','> [ Current assessment differs from the prior research record. ]'),severity:'warn'},
-      {value:txt('> [ 原始分類版本已保留。 ]','> [ Original classification version preserved. ]')},
-      {value:txt('> [ 新分類已寫入目前研究版本。 ]','> [ New classification saved as the current research version. ]')}
+      { text: txt('> [ 歷史評估已完成。 ]', '> [ Historical assessment complete. ]') },
+      { text: '> [ ' + txt(d.zhTitle, d.enTitle) + ' ]' },
+      { text: txt('> [ 正在核對歷史研究版本…… ]', '> [ Checking historical research versions... ]') },
+      { divider: true },
+      { text: txt('> [ 警告：分類結果不一致。 ]', '> [ WARNING: classification mismatch. ]'), className: 'warn' },
+      { text: txt('> [ 本次判斷與前次研究紀錄存在差異。 ]', '> [ Current assessment differs from the prior research record. ]'), className: 'warn' },
+      { text: txt('> [ 原始分類版本已保留。 ]', '> [ Original classification version preserved. ]') },
+      { text: txt('> [ 新分類已寫入目前研究版本。 ]', '> [ New classification saved as the current research version. ]') }
     ];
   }
-  function renderTyped(){
-    const container=$('#content');
-    container.innerHTML='<div class="system hero-terminal" role="log" aria-label="'+txt('分類比對訊息','Classification comparison')+'"></div>';
-    const target=container.firstElementChild;
-    const all=sequence();
-    const nodes=[];
-    for(const item of all){
-      const el=document.createElement(item.divider?'hr':'p');
-      if(!item.divider){el.className=item.severity||'';el.classList.add('terminal-line');el.textContent='';}
-      target.appendChild(el);nodes.push(el);
-    }
-    $('#next').disabled=true;
-    $('#next').textContent=txt('正在核對……','CHECKING...');
-    let line=0,offset=0;
-    const generation=++typingGeneration;
-    const characters=all.map(item=>item.divider?[]:Array.from(item.value));
-    function tick(){
-      if(generation!==typingGeneration||phase!==0)return;
-      while(line<all.length&&all[line].divider)line++;
-      if(line>=all.length){
-        typingTimer=null;$('#next').disabled=false;
-        $('#next').textContent=txt('繼續','CONTINUE');
+
+  function terminalSequencePhase1(){
+    return [
+      { text: txt('> [ 新研究紀錄已封存。 ]', '> [ New research record archived. ]') },
+      { text: txt('> [ 原始研究版本維持不變。 ]', '> [ Original research version remains unchanged. ]') }
+    ];
+  }
+
+  function renderTypedTerminal(sequence, afterHTML, busyLabel){
+    const container = $('#content');
+    container.innerHTML = `
+      <div class="system hero-terminal" role="log" aria-live="polite">
+        <div class="terminal-lines"></div>
+        <div class="terminal-after" hidden>${afterHTML || ''}</div>
+      </div>
+    `;
+
+    const wrapper = container.querySelector('.terminal-lines');
+    const after = container.querySelector('.terminal-after');
+
+    const nodes = sequence.map(item => {
+      const el = document.createElement(item.divider ? 'hr' : 'p');
+      if(!item.divider){
+        el.textContent = '';
+        el.className = 'terminal-line' + (item.className ? ' ' + item.className : '');
+      }
+      wrapper.appendChild(el);
+      return el;
+    });
+
+    $('#next').disabled = true;
+    $('#next').textContent = busyLabel;
+
+    let lineIndex = 0;
+    let charIndex = 0;
+    const token = ++typingToken;
+
+    function step(){
+      if(token !== typingToken) return;
+
+      while(lineIndex < sequence.length && sequence[lineIndex].divider){
+        lineIndex++;
+      }
+
+      if(lineIndex >= sequence.length){
+        if(after){
+          after.hidden = false;
+        }
+        $('#next').disabled = false;
+        $('#next').textContent = txt('繼續', 'CONTINUE');
+        typingTimer = null;
         return;
       }
-      const chars=characters[line];
-      offset=Math.min(chars.length,offset+(reduce?chars.length:1));
-      nodes[line].textContent=chars.slice(0,offset).join('');
-      if(offset===chars.length){line++;offset=0;typingTimer=setTimeout(tick,reduce?0:250)}
-      else typingTimer=setTimeout(tick,lang==='en'?23:43);
+
+      const current = sequence[lineIndex].text;
+      const chars = Array.from(current);
+
+      if(reduce){
+        nodes[lineIndex].textContent = current;
+        lineIndex++;
+        charIndex = 0;
+        typingTimer = setTimeout(step, 0);
+        return;
+      }
+
+      charIndex++;
+      nodes[lineIndex].textContent = chars.slice(0, charIndex).join('');
+
+      if(charIndex >= chars.length){
+        lineIndex++;
+        charIndex = 0;
+        typingTimer = setTimeout(step, 240);
+      } else {
+        typingTimer = setTimeout(step, lang === 'en' ? 20 : 38);
+      }
     }
-    tick();
+
+    step();
   }
+
+  function render(){
+    stopTyping();
+
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant';
+    try { localStorage.setItem('babel_lang', lang); } catch(e) {}
+
+    document.title = txt('昔日的英雄 — 千重折光', 'The Former Hero — A Thousand Refractions');
+    document.querySelector('.top > span').textContent = txt('巴別／最終歷史評估', 'BABEL / FINAL HISTORICAL ASSESSMENT');
+
+    $('#langButton').textContent = lang === 'en' ? '中文' : 'EN';
+
+    $('#archiveLink').href = (lang === 'en' ? 'archive_en.html' : 'archive.html') + '?scene=index';
+    $('#archiveLink').textContent = txt('返回檔案館', 'RETURN TO ARCHIVE');
+
+    $('#return').href = $('#archiveLink').href;
+    $('#return').textContent = txt('返回檔案館', 'RETURN TO ARCHIVE');
+
+    $('#heading').textContent = txt(d.zhTitle, d.enTitle);
+    $('#heading').hidden = phase < 2;
+
+    $('#headingZh').hidden = true;
+    $('#headingZh').textContent = '';
+
+    $('#tagline').hidden = true;
+
+    $('#kicker').textContent = txt(
+      '巴別／研究對象 000／' + phaseNames.zh[phase],
+      'BABEL / SUBJECT 000 / ' + phaseNames.en[phase]
+    );
+
+    const myth = $('#mythParallel');
+    myth.hidden = phase !== 2;
+
+    if(phase === 2){
+      myth.innerHTML =
+        '<span class="myth-title">' + escape(txt(d.mythZh, d.mythEn)) + '</span>' +
+        '<div class="myth-questions">' +
+        heroQuestions[lang].map(q => '<p>' + escape(q) + '</p>').join('') +
+        '</div>';
+    }
+
+    $('#content').innerHTML = '';
+
+    if(phase === 0){
+      renderTypedTerminal(
+        terminalSequencePhase0(),
+        '',
+        txt('正在核對……', 'CHECKING...')
+      );
+    }
+
+    if(phase === 1){
+      renderTypedTerminal(
+        terminalSequencePhase1(),
+        `
+          <hr>
+          <p class="muted">${txt('研究對象 000', 'SUBJECT 000')}</p>
+          <div class="subject">■ ■ ■</div>
+          <p>${txt('評估結果／', 'ASSESSMENT / ')}<span class="ending-word">${escape(txt(d.zhTitle, d.enTitle))}</span></p>
+        `,
+        txt('正在封存……', 'ARCHIVING...')
+      );
+    }
+
+    if(phase === 2){
+      $('#content').innerHTML = lines(lang === 'en' ? d.en : d.zh);
+    }
+
+    if(phase === 3){
+      $('#content').innerHTML = `
+        <div class="closing">
+          <p>${txt(
+            '歷史資料未發生變更。你的判斷已成為另一份研究紀錄。',
+            'The historical record remains unchanged. Your assessment has become another research entry.'
+          )}</p>
+          <p class="subject">■ ■ ■</p>
+          <p><em>${txt('千重面向，千重折光。', 'A thousand facets, a thousand refractions.')}</em></p>
+          <p>${txt(
+            '然而，真正被活過的，始終只有那一段人生。',
+            'But only one life was lived.'
+          )}</p>
+        </div>
+      `;
+    }
+
+    $('#back').hidden = phase === 0;
+    $('#next').hidden = phase === 3;
+    $('#return').hidden = phase !== 3;
+
+    $('#next').disabled = false;
+    if(phase === 2){
+      $('#next').textContent = txt('封存結局', 'ARCHIVE ENDING');
+    } else if(phase !== 3) {
+      $('#next').textContent = txt('繼續', 'CONTINUE');
+    }
+
+    $('#stepCount').textContent = (phase + 1) + ' / 4';
+
+    $('#chapter').classList.remove('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => $('#chapter').classList.add('visible')));
+  }
+
+  function go(delta){
+    if(delta > 0 && $('#next').disabled) return;
+
+    if(delta > 0 && phase === 2 && !completed){
+      try{
+        const key = 'babel_assessments';
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.push({
+          classification: 'exile',
+          timestamp: new Date().toISOString(),
+          source: preview ? 'development-preview' : 'researcher'
+        });
+        localStorage.setItem(key, JSON.stringify(arr.slice(-30)));
+      }catch(e){}
+      completed = true;
+    }
+
+    phase = Math.min(3, Math.max(0, phase + delta));
+    render();
+    scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  $('#next').addEventListener('click', () => go(1));
+  $('#back').addEventListener('click', () => go(-1));
+  $('#langButton').addEventListener('click', () => {
+    lang = lang === 'en' ? 'zh' : 'en';
+    render();
+  });
+
+  render();
+}
   function render(){
     endTyping();
     document.documentElement.lang=lang==='en'?'en':'zh-Hant';
