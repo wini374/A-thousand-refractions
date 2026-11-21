@@ -267,7 +267,7 @@ $('choose-zh').onclick=()=>setLanguage('zh');$('choose-en').onclick=()=>setLangu
 setLanguage(lang);
 const archiveLayer=$('archive-layer'),archiveFrame=$('archive-frame');
 function openArchive(){
- if(archiveLayer.hidden){archiveLayer.hidden=false;archiveLayer.style.opacity='0';archiveFrame.src=lang==='en'?'archive_en.html':'archive.html';requestAnimationFrame(()=>{archiveLayer.style.opacity='1';document.body.classList.add('archive-open')})}
+ if(archiveLayer.hidden){archiveLayer.hidden=false;archiveLayer.style.opacity='0';archiveFrame.src=(lang==='en'?'archive_en.html':'archive.html')+'?rev=20261121-startup-v2';requestAnimationFrame(()=>{archiveLayer.style.opacity='1';document.body.classList.add('archive-open')})}
 }
 $('enter').onclick=()=>{cancelSequence();openArchive()};
 window.addEventListener('message',event=>{
