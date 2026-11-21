@@ -12,6 +12,136 @@ const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':
 const txt=(z,e)=>lang==='en'?e:z;
 let step=0,done=false;
 const lines=(arr,cls='story')=>'<div class="'+cls+'">'+arr.map(x=>'<p>'+escape(x)+'</p>').join('')+'</div>';
+
+/* Ending I follows the archival decision chronologically:
+   assessment transcript -> sealed version -> myth reflection and narrative -> closure. */
+function runFormerHero(){
+  let phase=0,completed=false,typingTimer=null,typingGeneration=0;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const phaseNames={
+    zh:['歷史評估','研究紀錄','昔日的英雄','結局封存'],
+    en:['HISTORICAL ASSESSMENT','RESEARCH RECORD','THE FORMER HERO','ARCHIVE CLOSED']
+  };
+  const heroQuestions={
+    zh:['那一天，究竟是誰先選擇了離開？','是世界不再需要他？','還是他終於不再需要這個世界？'],
+    en:['On that day, who chose to leave first?','Had the world stopped needing him?','Or had he finally stopped needing the world?']
+  };
+  function endTyping(){
+    typingGeneration++;
+    if(typingTimer!==null){clearTimeout(typingTimer);typingTimer=null}
+  }
+  function sequence(){
+    const classification=txt(d.zhTitle,d.enTitle);
+    return [
+      {value:txt('> [ 歷史評估已完成。 ]','> [ Historical assessment complete. ]')},
+      {value:'> [ '+classification+' ]'},
+      {value:txt('> [ 正在核對歷史研究版本…… ]','> [ Checking historical research versions... ]')},
+      {divider:true},
+      {value:txt('> [ 警告：分類結果不一致。 ]','> [ WARNING: classification mismatch. ]'),severity:'warn'},
+      {value:txt('> [ 本次判斷與前次研究紀錄存在差異。 ]','> [ Current assessment differs from the prior research record. ]'),severity:'warn'},
+      {value:txt('> [ 原始分類版本已保留。 ]','> [ Original classification version preserved. ]')},
+      {value:txt('> [ 新分類已寫入目前研究版本。 ]','> [ New classification saved as the current research version. ]')}
+    ];
+  }
+  function renderTyped(){
+    const container=$('#content');
+    container.innerHTML='<div class="system hero-terminal" role="log" aria-label="'+txt('分類比對訊息','Classification comparison')+'"></div>';
+    const target=container.firstElementChild;
+    const all=sequence();
+    const nodes=[];
+    for(const item of all){
+      const el=document.createElement(item.divider?'hr':'p');
+      if(!item.divider){el.className=item.severity||'';el.classList.add('terminal-line');el.textContent='';}
+      target.appendChild(el);nodes.push(el);
+    }
+    $('#next').disabled=true;
+    $('#next').textContent=txt('正在核對……','CHECKING...');
+    let line=0,offset=0;
+    const generation=++typingGeneration;
+    const characters=all.map(item=>item.divider?[]:Array.from(item.value));
+    function tick(){
+      if(generation!==typingGeneration||phase!==0)return;
+      while(line<all.length&&all[line].divider)line++;
+      if(line>=all.length){
+        typingTimer=null;$('#next').disabled=false;
+        $('#next').textContent=txt('繼續','CONTINUE');
+        return;
+      }
+      const chars=characters[line];
+      offset=Math.min(chars.length,offset+(reduce?chars.length:1));
+      nodes[line].textContent=chars.slice(0,offset).join('');
+      if(offset===chars.length){line++;offset=0;typingTimer=setTimeout(tick,reduce?0:250)}
+      else typingTimer=setTimeout(tick,lang==='en'?23:43);
+    }
+    tick();
+  }
+  function render(){
+    endTyping();
+    document.documentElement.lang=lang==='en'?'en':'zh-Hant';
+    try{localStorage.setItem('babel_lang',lang)}catch(e){}
+    $('#langButton').textContent=lang==='en'?'中文':'EN';
+    $('#archiveLink').href=(lang==='en'?'archive_en.html':'archive.html')+'?scene=index';
+    $('#archiveLink').textContent=txt('返回檔案館','RETURN TO ARCHIVE');
+    $('#return').href=$('#archiveLink').href;
+    $('#return').textContent=txt('返回檔案館','RETURN TO ARCHIVE');
+    $('#heading').textContent=txt(d.zhTitle,d.enTitle);
+    $('#headingZh').hidden=true;
+    $('#headingZh').textContent='';
+    $('#tagline').hidden=true;
+    $('#kicker').textContent=txt('巴別／研究對象 000／'+phaseNames.zh[phase],'BABEL / SUBJECT 000 / '+phaseNames.en[phase]);
+    const myth=$('#mythParallel');
+    myth.hidden=phase!==2;
+    if(phase===2){
+      myth.innerHTML='<span class="myth-label">'+txt('神話映照','MYTHOLOGICAL PARALLEL')+'</span>'+
+        '<span class="myth-title">'+escape(txt(d.mythZh,d.mythEn))+'</span>'+
+        '<div class="myth-questions">'+heroQuestions[lang].map(q=>'<p>'+escape(q)+'</p>').join('')+'</div>';
+    }
+    $('#heading').hidden=phase<2;
+    let html='';
+    if(phase===1){
+      html='<div class="system hero-record">'+
+      '<p>'+escape(txt('> [ 新研究紀錄已封存。 ]','> [ New research record archived. ]'))+'</p>'+
+      '<p>'+escape(txt('> [ 原始研究版本維持不變。 ]','> [ Original research version remains unchanged. ]'))+'</p>'+
+      '<hr><p class="muted">'+txt('研究對象 000','SUBJECT 000')+'</p>'+
+      '<div class="subject">■ ■ ■</div>'+
+      '<p>'+txt('評估結果／','ASSESSMENT / ')+'<span class="ending-word">'+escape(txt(d.zhTitle,d.enTitle))+'</span></p></div>';
+    }
+    if(phase===2)html=lines(lang==='en'?d.en:d.zh);
+    if(phase===3){
+      html='<div class="closing"><p>'+txt('歷史資料未發生變更。你的判斷已成為另一份研究紀錄。','The historical record remains unchanged. Your assessment has become another research entry.')+'</p>'+
+      '<p class="subject">■ ■ ■</p><p><em>'+txt('千重面向，千重折光。','A thousand facets, a thousand refractions.')+'</em></p></div>';
+    }
+    $('#content').innerHTML=html;
+    $('#back').hidden=phase===0;
+    $('#next').hidden=phase===3;
+    $('#next').disabled=false;
+    $('#next').textContent=phase===2?txt('封存結局','ARCHIVE ENDING'):txt('繼續','CONTINUE');
+    $('#return').hidden=phase!==3;
+    $('#stepCount').textContent=(phase+1)+' / 4';
+    $('#chapter').classList.remove('visible');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>$('#chapter').classList.add('visible')));
+    if(phase===0)renderTyped();
+  }
+  function go(delta){
+    if(delta>0&&phase===0&&$('#next').disabled)return;
+    if(delta>0&&phase===2&&!completed){
+      try{
+        const key='babel_assessments',arr=JSON.parse(localStorage.getItem(key)||'[]');
+        arr.push({classification:'exile',timestamp:new Date().toISOString(),source:preview?'development-preview':'researcher'});
+        localStorage.setItem(key,JSON.stringify(arr.slice(-30)));
+      }catch(e){}
+      completed=true;
+    }
+    phase=Math.min(3,Math.max(0,phase+delta));
+    render();scrollTo({top:0,behavior:'smooth'});
+  }
+  $('#next').addEventListener('click',()=>go(1));
+  $('#back').addEventListener('click',()=>go(-1));
+  $('#langButton').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';render()});
+  render();
+}
+if(id==='exile'){runFormerHero();return;}
+
 function draw(){
 document.documentElement.lang=lang==='en'?'en':'zh-Hant';
 try{localStorage.setItem('babel_lang',lang)}catch(e){}
@@ -22,7 +152,7 @@ $('#return').href=$('#archiveLink').href;
 
 $('#kicker').textContent='BABEL / SUBJECT 000 / '+(step===0?'FINAL ASSESSMENT':step===1?'ARCHIVE PROTOCOL':step===2?'RESEARCH RECORD':'RECORD CLOSED');
 $('#heading').textContent=d.enTitle;$('#headingZh').textContent=d.zhTitle;$('#tagline').textContent=txt(d.zhTag,d.enTag);
-const myth=$('#mythParallel');if(myth){myth.hidden=step!==0;myth.innerHTML='<span class="myth-label">'+txt('MYTHOLOGICAL PARALLEL / 神話映照','MYTHOLOGICAL PARALLEL')+'</span><span class="myth-title">'+txt(d.mythZh,d.mythEn)+'</span><div class="myth-questions">'+(lang==='en'?['On that day, who had chosen to leave first?','Had the world stopped needing him?','Or had he finally stopped needing the world?']:['那一天，究竟是誰先選擇了離開？','是世界不再需要他？','還是他終於不再需要這個世界？']).map(q=>'<p>'+escape(q)+'</p>').join('')+'</div>';}
+
 let html='';
 if(step===0)html=lines(story);
 else if(step===1){
