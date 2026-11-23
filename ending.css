@@ -131,3 +131,36 @@ body.six-ending .story p {
 body[data-ending="guardian"] .memory-sketch{margin-top:0}
 @media(max-width:550px){.memory-film{aspect-ratio:5/4}.sketch-caption{min-height:132px;padding-top:25px}}
 @media(prefers-reduced-motion:reduce){.memory-film:after{opacity:.14}}
+
+/* Detailed 8-fps Guardian film: carved stone, charcoal drawing and paper layers */
+.memory-film{background:#171819;box-shadow:inset 0 0 55px #000b,0 16px 38px #0006}
+.memory-film::before{content:"";position:absolute;z-index:2;inset:0;border:7px solid #5b4b352b;outline:1px solid #bca47a24;outline-offset:-12px;pointer-events:none;box-shadow:inset 0 0 65px 21px #080807a8}
+.memory-frame{image-rendering:auto;filter:sepia(.18) contrast(1.04)}
+.sketch-masonry,.sketch-architecture{fill:none;stroke:#766b5d;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sketch-architecture{opacity:.58}
+.sketch-horizon{fill:none;stroke:#7f7564;stroke-width:1.25;stroke-linecap:round;opacity:.4}
+.old-city{fill:none;stroke:#b09b7b;stroke-width:1.6;opacity:.8}
+.sketch-foreground{fill:none}
+.foreground-fill{fill:#1d1d1b;stroke:none;opacity:.56}
+.sketch-ground{stroke:#a19478;stroke-width:1.5;opacity:.8;fill:none}
+.ground-etch,.ink-hatches,.charcoal-lines{fill:none;stroke:#9c886e;stroke-width:1.15;stroke-linecap:round;opacity:.32}
+.ground-etch.faint{opacity:.15}
+.sketch-altar{stroke-linejoin:round;stroke-linecap:round}
+.stone-rim{fill:#75634c;stroke:#d2b891;stroke-width:2;opacity:.82}
+.altar-face{fill:#3b3932;stroke:#a99273;stroke-width:1.8}
+.altar-top{fill:#262723;stroke:#c6ae8b;stroke-width:2.2}
+.detail-line{fill:none;stroke:#d0b38a;stroke-width:1;opacity:.55}
+.rim-highlight{fill:none;stroke:#e1c7a0;stroke-width:1.2;opacity:.63}
+.altar-glyph{fill:none;stroke:#c3a67a;stroke-width:1.8;opacity:.6}
+.sketch-flame{fill:#b97e43;stroke:#f0cc90;stroke-width:2.5;stroke-linejoin:round;filter:drop-shadow(0 0 7px #e9ac5250)}
+.sketch-inner{fill:#f6dc9d;stroke:#ffe3ac;stroke-width:1.1}
+#sparks circle{fill:#e4b67b}
+.distant-lamp{stroke:#d1ad79;fill:none;stroke-width:1.6;transition:none;filter:drop-shadow(0 0 4px #dfac6866)}
+.lamp-stone{stroke:#aa9474;fill:#292820}
+.lamp-flame{fill:#c79553;stroke:#edc68b;stroke-width:1}
+.lamp-highlight{fill:#f9e6b7;stroke:none}
+.lamp-glow{fill:#d9ab6b;stroke:none;opacity:.13}
+.film-label{bottom:16px;left:18px;font-size:9px;letter-spacing:.12em;z-index:3;color:#b8a07b}
+.film-counter{position:absolute;right:18px;bottom:16px;z-index:3;color:#b7a181;font:9px Georgia,serif;letter-spacing:.12em}
+.sketch-caption{min-height:108px}
+@media(max-width:550px){.memory-film::before{border-width:4px}.film-label,.film-counter{font-size:8px}.sketch-caption{min-height:138px}}
