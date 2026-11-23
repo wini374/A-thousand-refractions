@@ -19,6 +19,7 @@ window.__babelEndingMusic=true;
 const q=new URLSearchParams(location.search);
 const lang=q.get('lang')==='en'?'en':'zh';
 const isPreview=q.get('preview')==='1';
+const animation=q.get('animation')==='handdrawn'?'handdrawn':'digital';
 const $=id=>document.getElementById(id);
 const paths={exile:'A_Name_Left_Behind-1.mp3',guardian:'Letters_to_an_Ancient_Home-2.mp3',warrior:'The_Silent_Ledger-3-L.mp3',nightmare:'Where_the_Memory_Lingers-4.mp3',friend:'The_Paper_Between_Us-5.mp3',traitor:'Weight_of_the_Severed_Oath-6.mp3'};
 const audio=$('score');audio.volume=.72;audio.loop=false;
@@ -50,7 +51,7 @@ function showEnding(){
  $('gate').hidden=true;
  $('selection').classList.add('fade');
  $('reader').hidden=false;$('controls').hidden=false;
- $('endingFrame').src='ending_'+current+'.html?lang='+lang+(isPreview?'&preview=1':'');
+ $('endingFrame').src='ending_'+current+'.html?lang='+lang+(isPreview?'&preview=1':'')+'&animation='+animation;
  update();
 }
 function choose(key){
