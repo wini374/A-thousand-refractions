@@ -33,6 +33,17 @@ if(lang==='en'){
 }
 $('archive').href=(lang==='en'?'archive_en.html':'archive.html')+'?scene=index';
 const words=()=>lang==='en'?['PAUSE MUSIC','RESUME MUSIC','Music playing','Music paused','Soundtrack finished','Soundtrack could not be loaded']:['暫停音樂','繼續音樂','配樂播放中','配樂已暫停','配樂播放結束','配樂無法載入'];
+
+function reportScore(){
+ const frame=$('endingFrame').contentWindow;
+ if(!frame||current!=='guardian')return;
+ frame.postMessage({type:'babel-score-state',ending:current,ended:audio.ended,error:!!audio.error,paused:audio.paused,currentTime:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:null},location.origin);
+}
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==$('endingFrame').contentWindow)return;
+ if(event.data&&event.data.type==='babel-score-request'&&event.data.ending===current)reportScore();
+});
+
 function update(){const w=words();$('musicToggle').textContent=audio.paused?w[1]:w[0];$('audioState').textContent=audio.error?w[5]:audio.ended?w[4]:audio.paused?w[3]:w[2];}
 function showEnding(){
  if(!current||started)return;started=true;
@@ -59,6 +70,6 @@ $('retry').addEventListener('click',()=>{
 });
 $('musicToggle').addEventListener('click',()=>{if(audio.paused)audio.play().catch(update);else audio.pause();update();});
 $('backChoice').addEventListener('click',()=>{audio.pause();audio.removeAttribute('src');audio.load();$('endingFrame').removeAttribute('src');$('reader').hidden=true;$('controls').hidden=true;$('selection').classList.remove('fade');current=null;started=false;});
-audio.addEventListener('play',update);audio.addEventListener('pause',update);audio.addEventListener('ended',update);audio.addEventListener('error',update);
+audio.addEventListener('play',update);audio.addEventListener('pause',update);audio.addEventListener('ended',()=>{update();reportScore();});audio.addEventListener('error',()=>{update();reportScore();});
 })();
 </script></body></html>
