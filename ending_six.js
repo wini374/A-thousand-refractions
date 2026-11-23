@@ -53,6 +53,7 @@ audio.addEventListener('error',()=>{audioFailed=true;musicLabels();});
 
 /* Hand-drawn guardian epilogue: limited frames on purpose (8 fps). */
 const isGuardian=id==='guardian';
+const animationMode=new URLSearchParams(location.search).get('animation')==='handdrawn'?'handdrawn':'digital';
 let sketchTimer=null,epilogueTimer=null,epilogueStarted=0,scoreEnded=false,scoreKnown=false,frameIndex=0,epilogueStartedOnce=false;
 const epilogueText={
  zh:['城牆倒塌了。','通往故鄉的道路也已消失。','但每當夜幕降臨，仍有人記得如何點亮那盞燈。'],
@@ -141,6 +142,74 @@ function sketchHTML(){
  '<p class="sketch-hint">'+tr('逐格手書影像 · 此段記憶尚未結束','Hand-turned frames · This memory has not yet ended')+'</p>'+
  '<button class="action sketch-skip" type="button">'+tr('跳過尾聲','SKIP EPILOGUE')+'</button>'+
  '</section>';
+}
+
+function digitalHTML(){
+ const buildings=[
+ [270,198,42,65],[307,184,38,81],[340,194,51,70],[396,179,40,81],[433,188,48,70],[486,205,45,52],[535,211,36,48]
+ ].map(([x,y,w,h],i)=>'<g class="digital-building" style="--b:'+i+'"><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="1"/><path d="M'+(x-4)+' '+y+' L'+(x+w/2)+' '+(y-13-i%3*5)+' L'+(x+w+4)+' '+y+'Z"/><path d="M'+(x+10)+' '+(y+13)+' v'+(h-22)+' M'+(x+w-10)+' '+(y+13)+' v'+(h-22)+'" class="digital-building-line"/></g>').join('');
+ const dots=[
+ [330,268],[386,251],[436,262],[488,252],[546,266],[584,259],[621,270]
+ ].map(([x,y],i)=>'<g class="digital-home-lamp" style="--i:'+i+';--delay:'+(5+i*1.6)+'s" transform="translate('+x+' '+y+')">'+
+ '<circle class="digital-lamp-halo" cy="-9" r="21"/><path class="digital-lamp-stand" d="M-7 4 L-6 -2 L6 -2 L7 4 Z M-3 4 V12 M3 4 V12 M-8 12 H8"/>'+
+ '<path class="digital-lamp-fire" d="M0 -4 Q-12 -12 -3 -26 Q-1 -30 0 -32 Q11 -18 5 -9 Q4 -4 0 -4Z"/></g>').join('');
+ const particles=Array.from({length:17},(_,i)=>'<circle class="digital-ember" style="--i:'+i+';--delay:'+(i*.42)+'s;--dur:'+(4+i%5*.6)+'s" cx="'+(110+(i*43)%110)+'" cy="'+(200+(i*17)%46)+'" r="'+(i%3===0?2:1.15)+'"/>').join('');
+ const svg='<svg class="digital-scene-svg" viewBox="0 0 680 390" role="img" aria-label="'+tr('古城邦逐漸隱入夜色，聖火和遠方的燈火相繼點亮','An ancient city fades as its sacred fire and distant lights illuminate the night')+'">'+
+ '<defs><linearGradient id="digSky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#090f1e"/><stop offset=".55" stop-color="#1a2030"/><stop offset="1" stop-color="#5a3829"/></linearGradient>'+
+ '<radialGradient id="digFireGlow"><stop stop-color="#ffc579" stop-opacity=".62"/><stop offset=".3" stop-color="#d18c46" stop-opacity=".22"/><stop offset="1" stop-color="#ce7a3a" stop-opacity="0"/></radialGradient>'+
+ '<radialGradient id="digLampGlow"><stop stop-color="#ffe6a2" stop-opacity=".73"/><stop offset="1" stop-color="#ffe6a2" stop-opacity="0"/></radialGradient>'+
+ '<linearGradient id="digStone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9c8570"/><stop offset=".48" stop-color="#5f534c"/><stop offset="1" stop-color="#252c31"/></linearGradient>'+
+ '<linearGradient id="digFlame" x1="0" y1="1" x2=".45" y2="0"><stop stop-color="#d7642c"/><stop offset=".53" stop-color="#fcb65e"/><stop offset="1" stop-color="#ffefb9"/></linearGradient>'+
+ '<filter id="digBloom" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>'+
+ '</defs>'+
+ '<rect width="680" height="390" fill="url(#digSky)"/>'+
+ '<g class="digital-stars"><circle cx="99" cy="45" r="1.1"/><circle cx="160" cy="72" r=".9"/><circle cx="256" cy="38" r=".7"/><circle cx="336" cy="68" r=".8"/><circle cx="474" cy="47" r="1.2"/><circle cx="612" cy="86" r=".8"/><circle cx="550" cy="31" r=".9"/></g>'+
+ '<path d="M0 236 Q130 174 225 232 Q365 166 481 212 Q601 169 680 223 L680 390 L0 390Z" fill="#303744" opacity=".48"/>'+
+ '<g class="digital-old-city">'+buildings+
+ '<path d="M260 264 L260 246 L590 246 L590 270 M291 238 H459 M350 241 V265 M460 242 V265" stroke="#9c8270" stroke-width="3" fill="none"/>'+
+ '</g>'+
+ '<path class="digital-ground" d="M0 306 Q130 269 256 298 Q400 262 680 303 L680 390 L0 390Z"/>'+
+ '<path d="M16 326 Q130 295 264 323 M260 346 Q468 302 661 338 M82 365 Q207 339 314 361" stroke="#8d7770" stroke-opacity=".23" fill="none"/>'+
+ '<g class="digital-temple"><path d="M24 279 L24 138 L99 138 L99 279 M17 138 L105 138 L62 103 Z" fill="url(#digStone)" stroke="#c1a38a" stroke-width="1.4"/>'+
+ '<path d="M38 275 V150 M60 275 V150 M82 275 V150" stroke="#2d3038" stroke-width="10"/><path d="M38 275 V150 M60 275 V150 M82 275 V150" stroke="#c0a78b" stroke-width="2"/>'+
+ '<path d="M20 282 H105 M24 292 H108" stroke="#bca085" stroke-opacity=".7" stroke-width="4"/></g>'+
+ '<circle class="digital-primary-glow" cx="166" cy="228" r="133" fill="url(#digFireGlow)"/>'+
+ '<g class="digital-altar"><path d="M100 271 Q167 253 237 273 L232 284 Q165 304 104 284Z" fill="#ab8b69" stroke="#d4ac80" stroke-width="2"/>'+
+ '<path d="M113 280 L221 280 L226 311 L106 311 Z" fill="url(#digStone)" stroke="#bc9c7f" stroke-width="2"/>'+
+ '<path d="M106 312 H226 L235 329 H99 Z" fill="#756351" stroke="#bfa17d" stroke-width="2"/>'+
+ '<path d="M121 290 H209 M132 299 H201 M120 305 H214" stroke="#e3c49a" stroke-opacity=".32" stroke-width="1.8"/>'+
+ '<path d="M145 292 L154 286 L162 293 L171 286 L183 294 L195 288" fill="none" stroke="#e2c18f" stroke-opacity=".67" stroke-width="2"/></g>'+
+ '<g class="digital-fire-system"><path class="digital-flame-outer" d="M164 267 C134 234 140 208 161 177 C170 157 174 143 161 120 C206 152 191 185 190 193 C218 168 201 148 199 135 C240 196 211 239 186 264 Z" fill="url(#digFlame)"/>'+
+ '<path class="digital-flame-middle" d="M170 266 C153 248 156 231 174 208 C182 191 180 173 176 164 C211 203 198 221 189 238 Q194 257 170 266Z" fill="#ffda84"/>'+
+ '<path class="digital-flame-heart" d="M174 265 Q160 244 179 229 Q189 212 184 204 Q204 244 174 265Z" fill="#fff4c8"/></g>'+
+ particles+
+ dots+
+ '<rect x="0" y="0" width="680" height="390" fill="url(#digFireGlow)" class="digital-ambient-wash" opacity=".06"/>'+
+ '</svg>';
+ return '<section class="memory-sketch digital-epilogue" aria-label="'+tr('守望故土之人：數位動畫尾聲','Guardian: digital animated epilogue')+'">'+
+ '<div class="memory-film digital-film"><div class="digital-camera">'+svg+'</div>'+
+ '<div class="digital-film-vignette"></div><div class="film-label">BABEL / MEMORY OF THE LOST CITY-STATE</div></div>'+
+ '<div class="sketch-caption" aria-live="polite"><p class="sketch-quote"></p></div>'+
+ '<p class="sketch-hint">'+tr('城邦已遠去，燈火仍在延續','The city is gone. Its lights remain.')+'</p>'+
+ '<button class="action sketch-skip" type="button">'+tr('跳過尾聲','SKIP EPILOGUE')+'</button></section>';
+}
+function startDigital(){
+ if(phase!==3||!isGuardian)return;
+ epilogueStarted=Date.now();scoreEnded=false;scoreKnown=false;
+ const el=$('.digital-epilogue');if(!el)return;
+ const caption=el.querySelector('.sketch-quote');
+ el.querySelector('.sketch-skip').addEventListener('click',leaveEpilogue);
+ const messages=epilogueText[lang];
+ function tick(){
+  if(phase!==3)return;
+  const age=Date.now()-epilogueStarted;
+  caption.textContent=age<3300?'':messages[age<8900?0:age<14300?1:2];
+  if(managedByParent)window.parent.postMessage({type:'babel-score-request',ending:id},location.origin);
+  else if(audio.ended||audio.error){scoreKnown=true;scoreEnded=true;}
+  if(age>=19500&&((scoreKnown&&scoreEnded)||(!managedByParent&&audio.paused&&audio.currentTime===0)))leaveEpilogue();
+ }
+ tick();
+ epilogueTimer=setInterval(tick,450);
 }
 function stopSketch(){
  if(sketchTimer!==null){clearInterval(sketchTimer);sketchTimer=null;}
@@ -283,8 +352,8 @@ function render(){
   $('#content').innerHTML='<div class="story">'+(lang==='en'?d.en:d.zh).map(s=>'<p>'+safe(s)+'</p>').join('')+'</div>';
  }
  if(isGuardian&&phase===3){
-  $('#content').innerHTML=sketchHTML();
-  requestAnimationFrame(()=>startSketch());
+  $('#content').innerHTML=animationMode==='digital'?digitalHTML():sketchHTML();
+  requestAnimationFrame(()=>animationMode==='digital'?startDigital():startSketch());
  }
  if(phase===(isGuardian?4:3)){
   $('#content').innerHTML='<div class="closing"><p>'+tr('歷史資料未發生變更。你的判斷已成為另一份研究紀錄。','The historical record remains unchanged. Your assessment has become another research entry.')+'</p><p class="subject">■ ■ ■</p><p><em>'+tr('千重面向，千重折光。','A thousand facets, a thousand refractions.')+'</em></p><p>'+tr('然而，真正被活過的，始終只有那一段人生。','But only one life was lived.')+'</p></div>';
