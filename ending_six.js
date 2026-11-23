@@ -50,7 +50,93 @@ audio.addEventListener('pause',musicLabels);
 audio.addEventListener('ended',musicLabels);
 audio.addEventListener('error',()=>{audioFailed=true;musicLabels();});
 
+
+/* Hand-drawn guardian epilogue: limited frames on purpose (8 fps). */
+const isGuardian=id==='guardian';
+let sketchTimer=null,epilogueTimer=null,epilogueStarted=0,scoreEnded=false,scoreKnown=false,frameIndex=0,epilogueStartedOnce=false;
+const epilogueText={
+ zh:['城牆倒塌了。','通往故鄉的道路也已消失。','但每當夜幕降臨，仍有人記得如何點亮那盞燈。'],
+ en:['The walls have fallen.','The road home has disappeared.','Yet when night falls, someone still remembers how to light the lamp.']
+};
+const frames=[
+ 'M160 214 Q137 194 151 172 Q158 160 153 146 Q179 164 174 183 Q189 158 179 135 Q210 163 191 191 Q187 207 160 214 Z',
+ 'M160 215 Q145 197 147 176 Q149 160 158 149 Q166 167 172 184 Q190 157 183 143 Q202 156 197 185 Q189 212 160 215 Z',
+ 'M160 213 Q140 195 155 174 Q162 163 156 137 Q187 162 173 185 Q196 162 183 143 Q205 173 189 200 Q179 212 160 213 Z',
+ 'M160 216 Q139 201 150 178 Q165 155 158 148 Q188 162 176 189 Q191 174 187 150 Q204 167 193 197 Q180 214 160 216 Z'
+];
+function sketchHTML(){
+ return '<section class="memory-sketch" aria-label="'+tr('古老的聖火，與散落在遠方的燈光','An ancient hearth flame and scattered distant lights')+'">'+
+ '<div class="memory-film"><svg viewBox="0 0 640 380" class="memory-frame" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
+ '<defs><radialGradient id="sketchGlow"><stop offset="0" stop-color="#d7a66b" stop-opacity=".25"/><stop offset="1" stop-color="#d7a66b" stop-opacity="0"/></radialGradient><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="5" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".1"/></feComponentTransfer></filter></defs>'+
+ '<ellipse cx="160" cy="198" rx="105" ry="110" fill="url(#sketchGlow)"/>'+
+ '<path d="M16 279 L79 260 L103 272 L143 257 L174 269 L219 250 L247 264 L297 254 L338 265 L392 246 L451 262 L496 247 L554 261 L626 249" class="sketch-ground"/>'+
+ '<path d="M92 250 L100 185 L123 185 L132 245 M94 188 L110 168 L126 187 M151 247 L158 221 L176 220 L184 246 M151 221 L167 208 L183 223" class="sketch-ruins"/>'+
+ '<g class="distant-lamp" data-lamp="0"><path d="M330 250 L330 238 M325 238 L335 238 M330 237 Q323 230 331 217 Q336 229 333 235 Z"/></g>'+
+ '<g class="distant-lamp" data-lamp="1"><path d="M401 244 L401 231 M396 231 L407 231 M401 229 Q392 223 402 209 Q410 224 404 229 Z"/></g>'+
+ '<g class="distant-lamp" data-lamp="2"><path d="M468 246 L468 232 M462 232 L473 232 M468 232 Q462 223 469 212 Q476 225 471 231 Z"/></g>'+
+ '<g class="distant-lamp" data-lamp="3"><path d="M533 250 L533 237 M528 237 L539 237 M533 237 Q526 229 534 216 Q541 227 537 235 Z"/></g>'+
+ '<path d="M111 245 Q161 259 215 244 L202 264 L126 265 Z M131 267 L195 267 L183 280 L145 280 Z" class="sketch-brazier"/>'+
+ '<path id="guardianFlame" d="'+frames[0]+'" class="sketch-flame"/>'+
+ '<path id="flameInner" d="M162 215 Q153 202 161 187 Q169 198 170 206 Q168 214 162 215Z" class="sketch-inner"/>'+
+ '<rect width="640" height="380" filter="url(#grain)" opacity=".25" pointer-events="none"/></svg>'+
+ '<div class="film-label">ARCHIVE / MEMORY FRAGMENT 002</div></div>'+
+ '<div class="sketch-caption" aria-live="polite"><p class="sketch-quote"></p></div>'+
+ '<p class="sketch-hint">'+tr('逐格手書 · 等待配樂結束','Hand-drawn frames · Waiting for the soundtrack')+'</p>'+
+ '<button class="action sketch-skip" type="button">'+tr('跳過尾聲','SKIP EPILOGUE')+'</button>'+
+ '</section>';
+}
+function stopSketch(){
+ if(sketchTimer!==null){clearInterval(sketchTimer);sketchTimer=null;}
+ if(epilogueTimer!==null){clearInterval(epilogueTimer);epilogueTimer=null;}
+}
+function leaveEpilogue(){
+ if(phase!==3||!isGuardian)return;
+ stopSketch();phase=4;render();
+}
+function receiveScore(event){
+ if(!isGuardian||!managedByParent||event.origin!==location.origin||event.source!==window.parent)return;
+ if(!event.data||event.data.type!=='babel-score-state'||event.data.ending!=='guardian')return;
+ scoreKnown=true;scoreEnded=!!event.data.ended||!!event.data.error;
+}
+window.addEventListener('message',receiveScore);
+audio.addEventListener('ended',()=>{if(isGuardian&&!managedByParent){scoreKnown=true;scoreEnded=true;}});
+audio.addEventListener('error',()=>{if(isGuardian&&!managedByParent){scoreKnown=true;scoreEnded=true;}});
+function startSketch(){
+ if(!isGuardian||phase!==3)return;
+ epilogueStarted=Date.now();epilogueStartedOnce=true;frameIndex=0;scoreEnded=false;scoreKnown=false;
+ const el=$('.memory-sketch');
+ if(!el)return;
+ const flame=el.querySelector('#guardianFlame');
+ const inner=el.querySelector('#flameInner');
+ const captions=el.querySelector('.sketch-quote');
+ const lampNodes=Array.from(el.querySelectorAll('.distant-lamp'));
+ const messages=epilogueText[lang];
+ el.querySelector('.sketch-skip').addEventListener('click',leaveEpilogue);
+ function flip(){
+  if(phase!==3)return;
+  const age=Date.now()-epilogueStarted;
+  const idx=frameIndex++%frames.length;
+  flame.setAttribute('d',frames[idx]);
+  flame.setAttribute('transform',idx%2?'translate(1 -1)':'translate(-1 1)');
+  inner.setAttribute('transform',idx%2?'translate(0 1)':'translate(1 -1)');
+  const reveal=age>14500?3:age>10700?2:age>6900?1:age>3000?0:-1;
+  captions.textContent=reveal<0?'':messages[reveal];
+  lampNodes.forEach((node,i)=>{node.style.opacity=age>4300+i*3000?'1':'0';node.style.transform='translate('+(idx%2?1:-1)+'px '+(idx%3-1)+'px)';});
+ }
+ flip();sketchTimer=setInterval(flip,reduced?350:125);
+ function check(){
+  if(phase!==3)return;
+  if(managedByParent){
+   window.parent.postMessage({type:'babel-score-request',ending:id},location.origin);
+  }else if(audio.ended||audio.error){scoreKnown=true;scoreEnded=true;}
+  const age=Date.now()-epilogueStarted;
+  if(age>=18000 && ((scoreKnown&&scoreEnded)||(!managedByParent&&audio.paused&&audio.currentTime===0)))leaveEpilogue();
+ }
+ check();epilogueTimer=setInterval(check,700);
+}
+
 const names={zh:['歷史評估','研究紀錄',d.zhTitle,'結局封存'],en:['HISTORICAL ASSESSMENT','RESEARCH RECORD',d.enTitle,'ARCHIVE CLOSED']};
+if(isGuardian){names.zh.splice(3,0,'記憶的餘燼');names.en.splice(3,0,'MEMORY EPILOGUE');}
 let phase=0, completed=false, token=0, timer=null;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function stop(){token++;if(timer!==null){clearTimeout(timer);timer=null;}}
@@ -78,7 +164,7 @@ function terminal(items,after){
  tick();
 }
 function render(){
- stop();
+ stop();stopSketch();
  document.documentElement.lang=lang==='en'?'en':'zh-Hant';
  try{localStorage.setItem('babel_lang',lang);}catch(e){}
  document.title=tr(d.storyZhTitle+' — 千重折光',d.storyEnTitle+' — A Thousand Refractions');
@@ -89,7 +175,7 @@ function render(){
  $('#return').href=$('#archiveLink').href;
  $('#return').textContent=tr('返回檔案館','RETURN TO ARCHIVE');
  $('#heading').textContent=phase===2?tr(d.storyZhTitle,d.storyEnTitle):tr(d.zhTitle,d.enTitle);
- $('#heading').hidden=phase<2;
+ $('#heading').hidden=phase<2||isGuardian&&phase===3;
  $('#headingZh').hidden=true;
  $('#tagline').hidden=true;
  $('#kicker').textContent=tr('巴別／研究對象 000／'+names.zh[phase],'BABEL / SUBJECT 000 / '+names.en[phase]);
@@ -97,9 +183,10 @@ function render(){
  myth.hidden=phase!==2;
  if(phase===2)myth.innerHTML='<span class="myth-title">'+safe(tr(d.mythZh,d.mythEn))+'</span><div class="myth-questions">'+(lang==='en'?d.qEn:d.qZh).map(q=>'<p>'+safe(q)+'</p>').join('')+'</div>';
  $('#content').innerHTML='';
- $('#back').hidden=phase===0;
- $('#next').hidden=phase===3;
- $('#return').hidden=phase!==3;
+ const last=isGuardian?4:3;
+ $('#back').hidden=phase===0||isGuardian&&phase===3;
+ $('#next').hidden=phase===last||isGuardian&&phase===3;
+ $('#return').hidden=phase!==last;
  $('#next').disabled=false;
  $('#next').textContent=phase===2?tr('封存結局','ARCHIVE ENDING'):tr('繼續','CONTINUE');
  if(phase===0){
@@ -123,12 +210,16 @@ function render(){
  if(phase===2){
   $('#content').innerHTML='<div class="story">'+(lang==='en'?d.en:d.zh).map(s=>'<p>'+safe(s)+'</p>').join('')+'</div>';
  }
- if(phase===3){
+ if(isGuardian&&phase===3){
+  $('#content').innerHTML=sketchHTML();
+  requestAnimationFrame(()=>startSketch());
+ }
+ if(phase===(isGuardian?4:3)){
   $('#content').innerHTML='<div class="closing"><p>'+tr('歷史資料未發生變更。你的判斷已成為另一份研究紀錄。','The historical record remains unchanged. Your assessment has become another research entry.')+'</p><p class="subject">■ ■ ■</p><p><em>'+tr('千重面向，千重折光。','A thousand facets, a thousand refractions.')+'</em></p><p>'+tr('然而，真正被活過的，始終只有那一段人生。','But only one life was lived.')+'</p></div>';
  }
  musicPanel.hidden=managedByParent||phase<2;
  musicLabels();
- $('#stepCount').textContent=(phase+1)+' / 4';
+ $('#stepCount').textContent=(phase+1)+' / '+(isGuardian?5:4);
  $('#chapter').classList.remove('visible');
  requestAnimationFrame(()=>requestAnimationFrame(()=>$('#chapter').classList.add('visible')));
 }
@@ -143,7 +234,7 @@ function move(n){
   }catch(e){}
   completed=true;
  }
- phase=Math.max(0,Math.min(3,phase+n));
+ phase=Math.max(0,Math.min(isGuardian?4:3,phase+n));
  render();
  window.scrollTo({top:0,behavior:'smooth'});
 }
