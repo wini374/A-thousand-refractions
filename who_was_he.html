@@ -1,0 +1,64 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0b0e"><title>WHO WAS HE? — 千重折光</title><link rel="stylesheet" href="ending.css"><style>
+.choice-shell{width:min(780px,calc(100% - 42px));margin:clamp(55px,12vh,125px) auto;text-align:center;transition:opacity .55s ease}.choice-shell.fade{opacity:0;pointer-events:none}.choice-shell h1{font:normal clamp(30px,6vw,60px) Georgia,serif;letter-spacing:.12em}.prompt{line-height:2;color:#d6c4a5;margin:22px auto 36px}.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.choice{background:#161511;border:1px solid #806e4c;color:#eadbc2;padding:20px 12px;min-height:110px;cursor:pointer;font:20px Georgia,'Noto Serif TC',serif}.choice small{display:block;color:#a5957b;font:11px Georgia,serif;margin-top:11px;letter-spacing:.12em}.choice:hover,.choice:focus-visible{background:#28231a;border-color:#c7ae85}.reader{position:fixed;inset:0;background:#0b0b0e;z-index:10}.reader iframe{width:100%;height:100%;border:0;display:block;background:#0b0b0e}.reader-controls{position:fixed;z-index:12;right:clamp(12px,2vw,30px);bottom:clamp(12px,3vh,24px);display:flex;gap:8px;align-items:center;background:#111318e8;border:1px solid #9d865b99;padding:8px 10px;max-width:calc(100% - 24px);flex-wrap:wrap}.reader-controls button{border:1px solid #8c785a;background:#1c1a18;color:#e4d7c0;padding:9px 11px;cursor:pointer;font-size:12px}.reader-controls span{font:11px Georgia,serif;color:#cdbb9d}.reader-controls button:disabled{opacity:.45}.audio-gate{position:fixed;inset:0;z-index:20;background:#090a0de9;display:grid;place-content:center;text-align:center;padding:32px;gap:16px}.audio-gate button{padding:15px 25px;background:#252016;color:#eee0c8;border:1px solid #ae946c;cursor:pointer}.audio-gate p{line-height:2}.choice:disabled{opacity:.5;cursor:wait}@media(max-width:580px){.choices{grid-template-columns:repeat(2,minmax(0,1fr))}.reader-controls{left:12px;right:12px;justify-content:center}}
+</style></head><body><div class="border"></div><header class="top"><span>BABEL / SUBJECT 000 / FINAL ASSESSMENT</span><nav><a id="archive" href="archive.html?scene=index">返回檔案館</a></nav></header>
+<section class="choice-shell" id="selection"><p class="kicker">BABEL / FINAL ASSESSMENT</p><h1>WHO WAS HE?</h1><p class="prompt" id="prompt">在你眼中，他究竟是誰？</p><div class="choices" id="choices">
+<button class="choice" data-id="exile" type="button">英雄<small>HERO</small></button>
+<button class="choice" data-id="guardian" type="button">守護者<small>GUARDIAN</small></button>
+<button class="choice" data-id="warrior" type="button">戰士<small>WARRIOR</small></button>
+<button class="choice" data-id="nightmare" type="button">夢魘<small>NIGHTMARE</small></button>
+<button class="choice" data-id="friend" type="button">友人<small>FRIEND</small></button>
+<button class="choice" data-id="traitor" type="button">叛徒<small>TRAITOR</small></button>
+</div></section>
+<div id="reader" class="reader" hidden><iframe id="endingFrame" title="BABEL ending" allow="autoplay"></iframe></div>
+<div id="controls" class="reader-controls" hidden><button id="backChoice" type="button">返回判定</button><button id="musicToggle" type="button">暫停音樂</button><span id="audioState" role="status" aria-live="polite">配樂播放中</span></div>
+<div id="gate" class="audio-gate" hidden><p id="gateText">音訊無法自動啟動，請按下方按鈕開始音樂與結局。</p><button id="retry" type="button">開始結局</button></div>
+<audio id="score" preload="none"></audio>
+<script>
+(()=>{'use strict';
+window.__babelEndingMusic=true;
+const q=new URLSearchParams(location.search);
+const lang=q.get('lang')==='en'?'en':'zh';
+const isPreview=q.get('preview')==='1';
+const $=id=>document.getElementById(id);
+const paths={exile:'A_Name_Left_Behind-1.mp3',guardian:'Letters_to_an_Ancient_Home-2.mp3',warrior:'The_Silent_Ledger-3-L.mp3',nightmare:'Where_the_Memory_Lingers-4.mp3',friend:'The_Paper_Between_Us-5.mp3',traitor:'Weight_of_the_Severed_Oath-6.mp3'};
+const audio=$('score');audio.volume=.72;audio.loop=false;
+let current=null;let started=false;
+if(lang==='en'){
+ document.documentElement.lang='en';$('prompt').textContent='Who was he, in your eyes?';
+ const labels=['Hero','Guardian','Warrior','Nightmare','Friend','Traitor'];
+ document.querySelectorAll('.choice').forEach((el,i)=>{el.firstChild.textContent=labels[i]});
+ $('archive').textContent='RETURN TO ARCHIVE';$('backChoice').textContent='BACK TO CHOICES';
+ $('gateText').textContent='Sound could not start. Tap below to begin the music and ending.';
+ $('retry').textContent='BEGIN ENDING';
+}
+$('archive').href=(lang==='en'?'archive_en.html':'archive.html')+'?scene=index';
+const words=()=>lang==='en'?['PAUSE MUSIC','RESUME MUSIC','Music playing','Music paused','Soundtrack finished','Soundtrack could not be loaded']:['暫停音樂','繼續音樂','配樂播放中','配樂已暫停','配樂播放結束','配樂無法載入'];
+function update(){const w=words();$('musicToggle').textContent=audio.paused?w[1]:w[0];$('audioState').textContent=audio.error?w[5]:audio.ended?w[4]:audio.paused?w[3]:w[2];}
+function showEnding(){
+ if(!current||started)return;started=true;
+ $('gate').hidden=true;
+ $('selection').classList.add('fade');
+ $('reader').hidden=false;$('controls').hidden=false;
+ $('endingFrame').src='ending_'+current+'.html?lang='+lang+(isPreview?'&preview=1':'');
+ update();
+}
+function choose(key){
+ if(!paths[key])return;
+ current=key;started=false;
+ audio.pause();audio.src=paths[key];audio.load();
+ // Play within the original user click, before any navigation or iframe loading.
+ const p=audio.play();
+ if(p&&typeof p.then==='function')p.then(()=>showEnding()).catch(()=>{$('gate').hidden=false;update();});
+ else showEnding();
+}
+document.querySelectorAll('.choice').forEach(button=>button.addEventListener('click',()=>choose(button.dataset.id)));
+$('retry').addEventListener('click',()=>{
+ const p=audio.play();
+ if(p&&typeof p.then==='function')p.then(()=>showEnding()).catch(()=>{$('gateText').textContent=lang==='en'?'Audio is unavailable. You may still continue without sound.':'音檔無法載入，仍可選擇無聲繼續。';$('retry').textContent=lang==='en'?'CONTINUE WITHOUT SOUND':'無聲繼續';$('retry').onclick=showEnding;});
+ else showEnding();
+});
+$('musicToggle').addEventListener('click',()=>{if(audio.paused)audio.play().catch(update);else audio.pause();update();});
+$('backChoice').addEventListener('click',()=>{audio.pause();audio.removeAttribute('src');audio.load();$('endingFrame').removeAttribute('src');$('reader').hidden=true;$('controls').hidden=true;$('selection').classList.remove('fade');current=null;started=false;});
+audio.addEventListener('play',update);audio.addEventListener('pause',update);audio.addEventListener('ended',update);audio.addEventListener('error',update);
+})();
+</script></body></html>
