@@ -79,7 +79,7 @@ function pencilWall(x,y,w,h){
  return '<path class="sketch-masonry" d="M'+x+' '+y+' l2 -'+h+' l'+w+' -2 l-2 '+(h+2)+' Z M'+(x+5)+' '+(top+8)+' h'+(w-11)+' M'+(x+3)+' '+(top+20)+' h'+(w-8)+' M'+(x+4)+' '+(top+32)+' h'+(w-10)+' M'+(x+w/2)+' '+(top+9)+' v12 M'+(x+w/3)+' '+(top+21)+' v12 M'+(x+w*.77)+' '+(top+20)+' v12"/>';
 }
 function lampMarkup(x,y,i){
- return '<g class="distant-lamp" data-lamp="'+i+'" transform="translate('+x+' '+y+')">'+
+ return '<g class="distant-lamp" data-lamp="'+i+'" data-x="'+x+'" data-y="'+y+'" transform="translate('+x+' '+y+')">'+
  '<circle cx="0" cy="-17" r="17" class="lamp-glow"/>'+
  '<path class="lamp-stone" d="M-13 6 L-12 -1 L12 -1 L13 6 M-8 6 L-7 14 L7 14 L8 6 M-15 -2 L15 -2"/>'+
  '<path class="lamp-flame" d="M0 -4 Q-12 -14 -2 -26 Q0 -31 0 -36 Q10 -25 7 -16 Q10 -8 0 -4Z"/>'+
@@ -191,7 +191,7 @@ function startSketch(){
   lampNodes.forEach((node,i)=>{
     const lit=age>4600+i*1700;
     node.style.opacity=lit?'1':'0';
-    node.style.transform='translate('+([0,1,-1,0][(idx+i)%4])+'px '+([0,-1,0,1][(idx+i)%4])+'px)';
+    node.setAttribute('transform','translate('+(Number(node.dataset.x)+[0,1,-1,0][(idx+i)%4])+' '+(Number(node.dataset.y)+[0,-1,0,1][(idx+i)%4])+')');
   });
   counter.textContent='FRAME '+String(frameIndex).padStart(3,'0');
  }
