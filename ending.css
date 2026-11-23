@@ -208,3 +208,6 @@ body[data-ending="guardian"] .memory-sketch{margin-top:0}
 @keyframes digital-caption-appear{from{opacity:0}to{opacity:1}}
 @media(max-width:560px){.digital-film{aspect-ratio:5/4}.digital-epilogue .sketch-caption{min-height:140px}}
 @media(prefers-reduced-motion:reduce){.digital-epilogue .digital-camera,.digital-epilogue .digital-fire-system,.digital-epilogue .digital-flame-outer,.digital-epilogue .digital-flame-middle,.digital-epilogue .digital-home-lamp,.digital-epilogue .digital-old-city,.digital-epilogue .digital-temple,.digital-epilogue .digital-primary-glow,.digital-epilogue .digital-ambient-wash,.digital-epilogue .digital-ember,.digital-epilogue .digital-stars{animation:none!important}.digital-epilogue .digital-home-lamp{opacity:1}.digital-epilogue .digital-ember{opacity:.35}}
+
+.preview-mode-label{margin:0 auto 20px;text-align:center;font:12px/1.7 Georgia,'Noto Serif TC',serif;letter-spacing:.12em;color:#dbc39c;padding:9px 12px;border:1px solid #a88b605c;max-width:440px}
+.preview-pick{outline:2px solid #dec18e;outline-offset:3px}
