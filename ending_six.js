@@ -59,29 +59,86 @@ const epilogueText={
  en:['The walls have fallen.','The road home has disappeared.','Yet when night falls, someone still remembers how to light the lamp.']
 };
 const frames=[
- 'M160 214 Q137 194 151 172 Q158 160 153 146 Q179 164 174 183 Q189 158 179 135 Q210 163 191 191 Q187 207 160 214 Z',
- 'M160 215 Q145 197 147 176 Q149 160 158 149 Q166 167 172 184 Q190 157 183 143 Q202 156 197 185 Q189 212 160 215 Z',
- 'M160 213 Q140 195 155 174 Q162 163 156 137 Q187 162 173 185 Q196 162 183 143 Q205 173 189 200 Q179 212 160 213 Z',
- 'M160 216 Q139 201 150 178 Q165 155 158 148 Q188 162 176 189 Q191 174 187 150 Q204 167 193 197 Q180 214 160 216 Z'
+ 'M158 234 C142 215 145 200 154 182 C160 170 159 158 154 143 C174 160 178 177 173 190 C188 177 185 158 182 150 C211 179 202 204 191 216 C182 230 171 234 158 234 Z',
+ 'M158 234 C138 211 151 195 155 180 C159 166 150 157 159 142 C181 167 174 181 171 193 C188 174 190 164 184 151 C204 171 207 195 188 223 C179 229 166 238 158 234 Z',
+ 'M158 234 C145 220 142 198 156 184 C170 163 155 154 159 145 C178 165 183 182 171 198 C198 178 185 161 190 154 C202 169 207 203 185 223 C175 236 162 235 158 234 Z',
+ 'M158 234 C141 217 148 200 154 181 C160 159 162 158 152 144 C179 161 174 182 174 193 C189 180 196 167 186 148 C210 168 205 203 189 222 C180 232 169 235 158 234 Z',
+ 'M158 234 C140 215 146 199 149 189 C162 169 160 163 161 146 C177 166 183 181 172 194 C191 181 183 163 190 157 C212 183 199 212 184 224 C175 235 164 237 158 234 Z',
+ 'M158 234 C147 217 144 194 159 177 C166 166 155 156 156 149 C176 158 182 181 173 190 C195 177 192 159 186 149 C210 173 203 201 190 224 C182 236 163 234 158 234 Z',
+ 'M158 234 C139 215 149 201 156 181 C162 165 157 155 153 145 C180 163 180 177 174 193 C187 176 187 165 188 153 C204 176 209 196 189 223 C181 232 165 239 158 234 Z',
+ 'M158 234 C141 212 145 197 154 183 C168 162 159 157 160 142 C176 163 175 180 173 196 C193 181 186 166 182 153 C212 177 203 208 184 225 C173 232 169 236 158 234 Z'
 ];
+const flameCores=[
+ 'M164 232 Q154 220 163 207 Q173 197 169 183 Q188 202 178 216 Q177 231 164 232Z',
+ 'M163 232 Q152 216 164 201 Q174 193 170 181 Q187 199 182 216 Q178 227 163 232Z',
+ 'M162 233 Q155 213 165 204 Q179 193 170 186 Q189 202 178 220 Q172 231 162 233Z',
+ 'M165 232 Q152 220 162 207 Q177 190 168 182 Q187 203 181 215 Q177 226 165 232Z'
+];
+function pencilWall(x,y,w,h){
+ const top=y-h;
+ return '<path class="sketch-masonry" d="M'+x+' '+y+' l2 -'+h+' l'+w+' -2 l-2 '+(h+2)+' Z M'+(x+5)+' '+(top+8)+' h'+(w-11)+' M'+(x+3)+' '+(top+20)+' h'+(w-8)+' M'+(x+4)+' '+(top+32)+' h'+(w-10)+' M'+(x+w/2)+' '+(top+9)+' v12 M'+(x+w/3)+' '+(top+21)+' v12 M'+(x+w*.77)+' '+(top+20)+' v12"/>';
+}
+function lampMarkup(x,y,i){
+ return '<g class="distant-lamp" data-lamp="'+i+'" transform="translate('+x+' '+y+')">'+
+ '<circle cx="0" cy="-17" r="17" class="lamp-glow"/>'+
+ '<path class="lamp-stone" d="M-13 6 L-12 -1 L12 -1 L13 6 M-8 6 L-7 14 L7 14 L8 6 M-15 -2 L15 -2"/>'+
+ '<path class="lamp-flame" d="M0 -4 Q-12 -14 -2 -26 Q0 -31 0 -36 Q10 -25 7 -16 Q10 -8 0 -4Z"/>'+
+ '<path class="lamp-highlight" d="M0 -6 Q-4 -16 1 -23 Q6 -12 0 -6Z"/></g>';
+}
 function sketchHTML(){
- return '<section class="memory-sketch" aria-label="'+tr('古老的聖火，與散落在遠方的燈光','An ancient hearth flame and scattered distant lights')+'">'+
- '<div class="memory-film"><svg viewBox="0 0 640 380" class="memory-frame" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
- '<defs><radialGradient id="sketchGlow"><stop offset="0" stop-color="#d7a66b" stop-opacity=".25"/><stop offset="1" stop-color="#d7a66b" stop-opacity="0"/></radialGradient><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="5" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".1"/></feComponentTransfer></filter></defs>'+
- '<ellipse cx="160" cy="198" rx="105" ry="110" fill="url(#sketchGlow)"/>'+
- '<path d="M16 279 L79 260 L103 272 L143 257 L174 269 L219 250 L247 264 L297 254 L338 265 L392 246 L451 262 L496 247 L554 261 L626 249" class="sketch-ground"/>'+
- '<path d="M92 250 L100 185 L123 185 L132 245 M94 188 L110 168 L126 187 M151 247 L158 221 L176 220 L184 246 M151 221 L167 208 L183 223" class="sketch-ruins"/>'+
- '<g class="distant-lamp" data-lamp="0"><path d="M330 250 L330 238 M325 238 L335 238 M330 237 Q323 230 331 217 Q336 229 333 235 Z"/></g>'+
- '<g class="distant-lamp" data-lamp="1"><path d="M401 244 L401 231 M396 231 L407 231 M401 229 Q392 223 402 209 Q410 224 404 229 Z"/></g>'+
- '<g class="distant-lamp" data-lamp="2"><path d="M468 246 L468 232 M462 232 L473 232 M468 232 Q462 223 469 212 Q476 225 471 231 Z"/></g>'+
- '<g class="distant-lamp" data-lamp="3"><path d="M533 250 L533 237 M528 237 L539 237 M533 237 Q526 229 534 216 Q541 227 537 235 Z"/></g>'+
- '<path d="M111 245 Q161 259 215 244 L202 264 L126 265 Z M131 267 L195 267 L183 280 L145 280 Z" class="sketch-brazier"/>'+
- '<path id="guardianFlame" d="'+frames[0]+'" class="sketch-flame"/>'+
- '<path id="flameInner" d="M162 215 Q153 202 161 187 Q169 198 170 206 Q168 214 162 215Z" class="sketch-inner"/>'+
- '<rect width="640" height="380" filter="url(#grain)" opacity=".25" pointer-events="none"/></svg>'+
- '<div class="film-label">ARCHIVE / MEMORY FRAGMENT 002</div></div>'+
+ const lamps=[[308,253],[349,241],[397,249],[439,235],[485,252],[533,241],[577,255]];
+ const oldCity='<g id="oldCity" class="old-city">'+
+ '<path d="M255 231 L255 199 L270 199 L270 176 L281 165 L292 178 L292 195 L307 195 L307 227 M304 226 L303 209 L336 209 L337 189 L347 181 L357 190 L357 226 M367 228 L367 186 L380 186 L380 169 L398 160 L418 170 L418 187 L433 187 L433 225 M443 232 L443 207 L459 207 L459 197 L478 197 L478 230" />'+
+ '<path d="M275 199 L275 185 L285 185 L285 200 M385 185 L385 173 L403 173 L403 185 M315 211 L330 211 M448 210 L466 210" />'+
+ '<path d="M270 180 L281 168 L292 180 M379 169 L398 158 L419 170 M294 200 L307 200 M365 192 L378 192"/>'+
+ '</g>';
+ const temple='<g class="sketch-architecture">'+
+ '<path d="M22 264 L22 122 L67 122 L67 265 M17 122 L73 122 L66 114 L24 114Z M19 115 L19 105 L69 105 L69 114 M26 106 L45 83 L63 106"/>'+
+ '<path d="M22 132 L66 132 M22 142 L65 142 M25 151 L64 151 M28 161 L62 161 M29 174 L59 174 M30 185 L60 185 M27 200 L64 200 M26 211 L64 211 M22 229 L66 229 M26 246 L62 246"/>'+
+ '<path d="M36 265 L36 138 M53 265 L53 138" class="detail-line"/>'+
+ '<path d="M68 266 L97 254 L116 259 M67 261 L91 248 L113 253 M77 245 L92 232 L112 234 M112 260 L129 253" />'+
+ '<path d="M205 262 L224 253 L231 231 L246 231 L245 259 M226 232 L227 217 L247 217 L249 231 M236 217 L236 207 M219 262 L253 261"/>'+
+ '<path d="M20 269 L74 269 M25 276 L69 276 M206 265 L252 266"/>'+
+ '</g>';
+ const skyline='<path class="sketch-horizon" d="M0 270 Q78 236 137 260 T268 261 Q345 235 408 260 Q485 225 560 251 L640 267 M0 280 Q90 265 155 282 Q265 265 350 284 Q450 266 640 283"/>';
+ const foreground='<g class="sketch-foreground">'+
+ '<path d="M0 300 L79 279 L123 294 L161 280 L205 292 L260 278 L326 289 L367 279 L420 292 L486 281 L547 292 L640 275 L640 380 L0 380 Z" class="foreground-fill"/>'+
+ '<path d="M0 300 L79 279 L123 294 L161 280 L205 292 L260 278 L326 289 L367 279 L420 292 L486 281 L547 292 L640 275" class="sketch-ground"/>'+
+ '<path d="M10 316 L85 299 L128 315 M63 342 L120 330 M211 313 L252 303 L298 312 M347 311 L404 304 L448 317 M484 318 L533 309 L596 306 M14 350 L49 343 M155 357 L232 345 M289 341 L343 340 M427 353 L476 346 M559 344 L624 331" class="ground-etch"/>'+
+ '<path d="M0 331 L63 313 M78 370 L132 356 M211 377 L270 359 M337 369 L382 351 M476 370 L539 355" class="ground-etch faint"/>'+
+ '</g>';
+ const altar='<g id="altar" class="sketch-altar">'+
+ '<path d="M95 286 Q154 299 227 285 L234 294 Q169 310 91 295 Z" class="stone-rim"/>'+
+ '<path d="M113 282 L111 260 Q159 268 210 259 L210 282 Q166 297 113 282 Z" class="altar-face"/>'+
+ '<path d="M111 260 Q159 248 210 260 Q161 272 111 260 Z" class="altar-top"/>'+
+ '<path d="M121 282 L121 271 M132 286 L134 270 M144 286 L146 273 M155 287 L158 271 M170 288 L173 272 M183 286 L186 270 M199 285 L201 269" class="detail-line"/>'+
+ '<path d="M104 293 L111 311 L217 310 L225 293 M117 313 L113 329 L221 328 L218 313" class="altar-face"/>'+
+ '<path d="M122 321 L208 321 M145 312 L147 328 M169 312 L169 328 M194 313 L192 327" class="detail-line"/>'+
+ '<path d="M113 261 C128 253 185 254 209 260" class="rim-highlight"/>'+
+ '<path d="M139 309 L146 302 L154 307 L160 300 L168 307 L176 301 L182 307" class="altar-glyph"/>'+
+ '<path d="M107 316 L222 316 M103 329 L224 329" class="rim-highlight"/>'+
+ '</g>';
+ const svg='<svg viewBox="0 0 640 380" class="memory-frame" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
+ '<defs><radialGradient id="sketchGlow"><stop offset="0" stop-color="#e6b779" stop-opacity=".32"/><stop offset=".5" stop-color="#a56f41" stop-opacity=".1"/><stop offset="1" stop-color="#d7a66b" stop-opacity="0"/></radialGradient><linearGradient id="nightSky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#14191c"/><stop offset=".65" stop-color="#25231f"/><stop offset="1" stop-color="#3a3025"/></linearGradient>'+
+ '<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".63" numOctaves="2" seed="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".16"/></feComponentTransfer></filter></defs>'+
+ '<rect width="640" height="380" fill="url(#nightSky)"/>'+
+ '<path d="M0 210 Q100 189 180 206 Q253 185 320 201 Q393 186 486 201 Q566 177 640 203 L640 0 L0 0Z" fill="#131719" opacity=".55"/>'+
+ '<g id="handdrawnSet"><path class="ink-hatches" d="M0 214 L75 210 M0 223 L83 218 M540 201 L640 193 M552 209 L640 201 M530 219 L640 212 M22 185 L58 187 M29 191 L62 194"/>'+
+ oldCity+skyline+temple+foreground+
+ '<ellipse cx="158" cy="221" rx="115" ry="119" fill="url(#sketchGlow)" class="flame-glow"/>'+
+ '<path class="charcoal-lines" d="M110 248 L120 238 M192 235 L204 245 M92 264 L106 255 M220 254 L230 251"/>'+
+ altar+
+ '<path id="guardianFlame" class="sketch-flame" d="'+frames[0]+'"/>'+
+ '<path id="flameInner" class="sketch-inner" d="'+flameCores[0]+'"/>'+
+ '<g id="sparks"><circle cx="146" cy="158" r="1.4"/><circle cx="183" cy="145" r="1"/><circle cx="165" cy="129" r="1.7"/><circle cx="199" cy="177" r="1.1"/><circle cx="138" cy="190" r=".9"/></g>'+
+ '</g>'+
+ lamps.map((lamp,i)=>lampMarkup(lamp[0],lamp[1],i)).join('')+
+ '<rect width="640" height="380" filter="url(#grain)" opacity=".28" pointer-events="none"/>'+
+ '</svg>';
+ return '<section class="memory-sketch" aria-label="'+tr('古老的聖火與流散之人的燈火','An ancient sacred fire and the lights of exiles')+'">'+
+ '<div class="memory-film">'+svg+'<div class="film-label">BABEL · ARCHIVAL RECONSTRUCTION / 002</div><span class="film-counter">FRAME 001</span></div>'+
  '<div class="sketch-caption" aria-live="polite"><p class="sketch-quote"></p></div>'+
- '<p class="sketch-hint">'+tr('逐格手書 · 等待配樂結束','Hand-drawn frames · Waiting for the soundtrack')+'</p>'+
+ '<p class="sketch-hint">'+tr('逐格手書影像 · 此段記憶尚未結束','Hand-turned frames · This memory has not yet ended')+'</p>'+
  '<button class="action sketch-skip" type="button">'+tr('跳過尾聲','SKIP EPILOGUE')+'</button>'+
  '</section>';
 }
@@ -104,11 +161,15 @@ audio.addEventListener('error',()=>{if(isGuardian&&!managedByParent){scoreKnown=
 function startSketch(){
  if(!isGuardian||phase!==3)return;
  epilogueStarted=Date.now();epilogueStartedOnce=true;frameIndex=0;scoreEnded=false;scoreKnown=false;
- const el=$('.memory-sketch');
- if(!el)return;
+ const el=$('.memory-sketch');if(!el)return;
  const flame=el.querySelector('#guardianFlame');
  const inner=el.querySelector('#flameInner');
+ const sparks=Array.from(el.querySelectorAll('#sparks circle'));
+ const set=el.querySelector('#handdrawnSet');
+ const city=el.querySelector('#oldCity');
+ const glow=el.querySelector('.flame-glow');
  const captions=el.querySelector('.sketch-quote');
+ const counter=el.querySelector('.film-counter');
  const lampNodes=Array.from(el.querySelectorAll('.distant-lamp'));
  const messages=epilogueText[lang];
  el.querySelector('.sketch-skip').addEventListener('click',leaveEpilogue);
@@ -117,24 +178,35 @@ function startSketch(){
   const age=Date.now()-epilogueStarted;
   const idx=frameIndex++%frames.length;
   flame.setAttribute('d',frames[idx]);
-  flame.setAttribute('transform',idx%2?'translate(1 -1)':'translate(-1 1)');
+  inner.setAttribute('d',flameCores[idx%flameCores.length]);
+  flame.setAttribute('transform',idx%3===0?'translate(1 -1)':idx%3===1?'translate(-1 0)':'translate(0 1)');
   inner.setAttribute('transform',idx%2?'translate(0 1)':'translate(1 -1)');
-  const reveal=age>14500?3:age>10700?2:age>6900?1:age>3000?0:-1;
+  set.setAttribute('transform',idx%4===0?'translate(.6 -.6)':idx%4===1?'translate(-.4 .5)':idx%4===2?'translate(.4 .3)':'translate(-.5 -.3)');
+  glow.setAttribute('opacity',String([.72,.87,.69,.93,.8,.96,.76,.85][idx]));
+  sparks.forEach((s,i)=>{s.setAttribute('transform','translate('+([0,1,-1,2,-2,0,1,-1][idx]+i%2)+' '+(-((frameIndex+i*3)%6)*1.8)+')');s.setAttribute('opacity',String((idx+i)%4===0?.18:.7));});
+  const reveal=age>14800?2:age>9300?1:age>3600?0:-1;
   captions.textContent=reveal<0?'':messages[reveal];
-  lampNodes.forEach((node,i)=>{node.style.opacity=age>4300+i*3000?'1':'0';node.style.transform='translate('+(idx%2?1:-1)+'px '+(idx%3-1)+'px)';});
+  // The ancestral town fades, but the living lights continue to appear.
+  city.style.opacity=String(age<7000?.8:Math.max(.12,.8-(age-7000)/11500));
+  lampNodes.forEach((node,i)=>{
+    const lit=age>4600+i*1700;
+    node.style.opacity=lit?'1':'0';
+    node.style.transform='translate('+([0,1,-1,0][(idx+i)%4])+'px '+([0,-1,0,1][(idx+i)%4])+'px)';
+  });
+  counter.textContent='FRAME '+String(frameIndex).padStart(3,'0');
  }
- flip();sketchTimer=setInterval(flip,reduced?350:125);
+ flip();
+ // Eight discrete drawings per second, not a smooth shape tween.
+ sketchTimer=setInterval(flip,reduced?350:125);
  function check(){
   if(phase!==3)return;
-  if(managedByParent){
-   window.parent.postMessage({type:'babel-score-request',ending:id},location.origin);
-  }else if(audio.ended||audio.error){scoreKnown=true;scoreEnded=true;}
+  if(managedByParent){window.parent.postMessage({type:'babel-score-request',ending:id},location.origin);}
+  else if(audio.ended||audio.error){scoreKnown=true;scoreEnded=true;}
   const age=Date.now()-epilogueStarted;
-  if(age>=18000 && ((scoreKnown&&scoreEnded)||(!managedByParent&&audio.paused&&audio.currentTime===0)))leaveEpilogue();
+  if(age>=19000&&((scoreKnown&&scoreEnded)||(!managedByParent&&audio.paused&&audio.currentTime===0)))leaveEpilogue();
  }
  check();epilogueTimer=setInterval(check,700);
 }
-
 const names={zh:['歷史評估','研究紀錄',d.zhTitle,'結局封存'],en:['HISTORICAL ASSESSMENT','RESEARCH RECORD',d.enTitle,'ARCHIVE CLOSED']};
 if(isGuardian){names.zh.splice(3,0,'記憶的餘燼');names.en.splice(3,0,'MEMORY EPILOGUE');}
 let phase=0, completed=false, token=0, timer=null;
