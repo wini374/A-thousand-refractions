@@ -11,25 +11,26 @@ const tr=(zh,en)=>lang==='en'?en:zh;
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const MUSIC={
- exile:'assets/music/A_Name_Left_Behind-1.mp3',
- guardian:'assets/music/Letters_to_an_Ancient_Home-2.mp3',
- warrior:'assets/music/The_Silent_Ledger-3-L.mp3',
- nightmare:'assets/music/Where_the_Memory_Lingers-4.mp3',
- friend:'assets/music/The_Paper_Between_Us-5.mp3',
- traitor:'assets/music/Weight_of_the_Severed_Oath-6.mp3'
+ exile:'A_Name_Left_Behind-1.mp3',
+ guardian:'Letters_to_an_Ancient_Home-2.mp3',
+ warrior:'The_Silent_Ledger-3-L.mp3',
+ nightmare:'Where_the_Memory_Lingers-4.mp3',
+ friend:'The_Paper_Between_Us-5.mp3',
+ traitor:'Weight_of_the_Severed_Oath-6.mp3'
 };
+const managedByParent=(()=>{try{return window.parent!==window&&window.parent.__babelEndingMusic===true;}catch(e){return false;}})();
 const audio=document.createElement('audio');
-audio.preload='none';
+audio.preload=managedByParent?'none':'metadata';
 audio.loop=false;
 audio.volume=.72;
-audio.src=MUSIC[id];
+if(!managedByParent)audio.src=MUSIC[id];
 const musicPanel=document.createElement('div');
 musicPanel.className='ending-music';
 musicPanel.hidden=true;
 musicPanel.innerHTML='<button type="button" class="music-trigger"></button><span class="music-status" role="status" aria-live="polite"></span>';
 const actions=$('.actions');
 actions.parentNode.insertBefore(musicPanel,actions);
-document.body.appendChild(audio);
+if(!managedByParent)document.body.appendChild(audio);
 const trigger=musicPanel.querySelector('.music-trigger');
 const status=musicPanel.querySelector('.music-status');
 let audioFailed=false;
@@ -125,7 +126,7 @@ function render(){
  if(phase===3){
   $('#content').innerHTML='<div class="closing"><p>'+tr('歷史資料未發生變更。你的判斷已成為另一份研究紀錄。','The historical record remains unchanged. Your assessment has become another research entry.')+'</p><p class="subject">■ ■ ■</p><p><em>'+tr('千重面向，千重折光。','A thousand facets, a thousand refractions.')+'</em></p><p>'+tr('然而，真正被活過的，始終只有那一段人生。','But only one life was lived.')+'</p></div>';
  }
- musicPanel.hidden=phase<2;
+ musicPanel.hidden=managedByParent||phase<2;
  musicLabels();
  $('#stepCount').textContent=(phase+1)+' / 4';
  $('#chapter').classList.remove('visible');
