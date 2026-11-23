@@ -9,6 +9,46 @@ let lang=qs.get('lang')==='en'?'en':qs.get('lang')==='zh'?'zh':(localStorage.get
 const $=sel=>document.querySelector(sel);
 const tr=(zh,en)=>lang==='en'?en:zh;
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const MUSIC={
+ exile:'assets/music/A_Name_Left_Behind-1.mp3',
+ guardian:'assets/music/Letters_to_an_Ancient_Home-2.mp3',
+ warrior:'assets/music/The_Silent_Ledger-3-L.mp3',
+ nightmare:'assets/music/Where_the_Memory_Lingers-4.mp3',
+ friend:'assets/music/The_Paper_Between_Us-5.mp3',
+ traitor:'assets/music/Weight_of_the_Severed_Oath-6.mp3'
+};
+const audio=document.createElement('audio');
+audio.preload='none';
+audio.loop=false;
+audio.volume=.72;
+audio.src=MUSIC[id];
+const musicPanel=document.createElement('div');
+musicPanel.className='ending-music';
+musicPanel.hidden=true;
+musicPanel.innerHTML='<button type="button" class="music-trigger"></button><span class="music-status" role="status" aria-live="polite"></span>';
+const actions=$('.actions');
+actions.parentNode.insertBefore(musicPanel,actions);
+document.body.appendChild(audio);
+const trigger=musicPanel.querySelector('.music-trigger');
+const status=musicPanel.querySelector('.music-status');
+let audioFailed=false;
+function musicLabels(){
+ trigger.textContent=audio.paused?tr('播放結局配樂','PLAY ENDING MUSIC'):tr('暫停配樂','PAUSE MUSIC');
+ status.textContent=audioFailed?tr('音檔尚未部署或無法載入。','Audio file is not yet deployed or could not be loaded.'):audio.ended?tr('播放結束','Playback complete'):tr('音量 72% · 音樂由你手動開始','Volume 72% · Tap to start music');
+}
+trigger.addEventListener('click',()=>{
+ if(!audio.paused){audio.pause();musicLabels();return;}
+ audioFailed=false;
+ const p=audio.play();
+ if(p&&typeof p.catch==='function')p.catch(()=>{audioFailed=true;musicLabels();});
+ musicLabels();
+});
+audio.addEventListener('play',musicLabels);
+audio.addEventListener('pause',musicLabels);
+audio.addEventListener('ended',musicLabels);
+audio.addEventListener('error',()=>{audioFailed=true;musicLabels();});
+
 const names={zh:['歷史評估','研究紀錄',d.zhTitle,'結局封存'],en:['HISTORICAL ASSESSMENT','RESEARCH RECORD',d.enTitle,'ARCHIVE CLOSED']};
 let phase=0, completed=false, token=0, timer=null;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -85,6 +125,8 @@ function render(){
  if(phase===3){
   $('#content').innerHTML='<div class="closing"><p>'+tr('歷史資料未發生變更。你的判斷已成為另一份研究紀錄。','The historical record remains unchanged. Your assessment has become another research entry.')+'</p><p class="subject">■ ■ ■</p><p><em>'+tr('千重面向，千重折光。','A thousand facets, a thousand refractions.')+'</em></p><p>'+tr('然而，真正被活過的，始終只有那一段人生。','But only one life was lived.')+'</p></div>';
  }
+ musicPanel.hidden=phase<2;
+ musicLabels();
  $('#stepCount').textContent=(phase+1)+' / 4';
  $('#chapter').classList.remove('visible');
  requestAnimationFrame(()=>requestAnimationFrame(()=>$('#chapter').classList.add('visible')));
