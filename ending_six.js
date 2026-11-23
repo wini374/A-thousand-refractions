@@ -54,6 +54,7 @@ audio.addEventListener('error',()=>{audioFailed=true;musicLabels();});
 /* Hand-drawn guardian epilogue: limited frames on purpose (8 fps). */
 const isGuardian=id==='guardian';
 const animationMode=new URLSearchParams(location.search).get('animation')==='handdrawn'?'handdrawn':'digital';
+const epiloguePreview=isGuardian&&preview&&qs.get('scene')==='epilogue';
 let sketchTimer=null,epilogueTimer=null,epilogueStarted=0,scoreEnded=false,scoreKnown=false,frameIndex=0,epilogueStartedOnce=false;
 const epilogueText={
  zh:['城牆倒塌了。','通往故鄉的道路也已消失。','但每當夜幕降臨，仍有人記得如何點亮那盞燈。'],
@@ -278,7 +279,7 @@ function startSketch(){
 }
 const names={zh:['歷史評估','研究紀錄',d.zhTitle,'結局封存'],en:['HISTORICAL ASSESSMENT','RESEARCH RECORD',d.enTitle,'ARCHIVE CLOSED']};
 if(isGuardian){names.zh.splice(3,0,'記憶的餘燼');names.en.splice(3,0,'MEMORY EPILOGUE');}
-let phase=0, completed=false, token=0, timer=null;
+let phase=epiloguePreview?3:0, completed=false, token=0, timer=null;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function stop(){token++;if(timer!==null){clearTimeout(timer);timer=null;}}
 function terminal(items,after){
@@ -353,6 +354,7 @@ function render(){
  }
  if(isGuardian&&phase===3){
   $('#content').innerHTML=animationMode==='digital'?digitalHTML():sketchHTML();
+  if(epiloguePreview){const modeLabel=document.createElement('p');modeLabel.className='preview-mode-label';modeLabel.textContent=animationMode==='digital'?tr('數位動畫版 · 平滑運鏡與光影','DIGITAL · SMOOTH CAMERA & LIGHTING'):tr('手書動畫版 · 8 FPS 逐格翻頁','HAND-DRAWN · 8 FPS FLIPBOOK');$('#content').prepend(modeLabel);}
   requestAnimationFrame(()=>animationMode==='digital'?startDigital():startSketch());
  }
  if(phase===(isGuardian?4:3)){
