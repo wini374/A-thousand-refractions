@@ -106,3 +106,8 @@ body.six-ending .story p {
   text-indent:0;
   text-align:left;
 }
+
+/* Shared six-ending soundtrack panel. Playback requires a user gesture on mobile. */
+.ending-music{display:flex;flex-direction:column;gap:8px;align-items:center;margin:35px auto 0;text-align:center;max-width:560px}
+.ending-music .music-trigger{padding:11px 24px;min-height:44px;background:#151a1f;border:1px solid #bba47b8c;color:#e5d6ba;cursor:pointer;font:13px Georgia,'Noto Serif TC',serif;letter-spacing:.06em}
+.ending-music .music-status{color:#afa18b;font-size:12px;line-height:1.7}
